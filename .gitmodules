@@ -7,3 +7,18 @@
 [submodule "packages/foundry/lib/solidity-bytes-utils"]
 	path = packages/foundry/lib/solidity-bytes-utils
 	url = https://github.com/gnsps/solidity-bytes-utils
+[submodule "packages/foundry/lib/solady"]
+	path = packages/foundry/lib/solady
+	url = https://github.com/Vectorized/solady
+[submodule "packages/foundry/lib/clones-with-immutable-args"]
+	path = packages/foundry/lib/clones-with-immutable-args
+	url = https://github.com/wighawag/clones-with-immutable-args
+[submodule "packages/foundry/lib/diamond-2"]
+	path = packages/foundry/lib/diamond-2
+	url = https://github.com/mudgen/diamond-2
+[submodule "lib/layerzero-v2"]
+	path = lib/layerzero-v2
+	url = https://github.com/LayerZero-Labs/layerzero-v2
+[submodule "packages/foundry/lib/devtools"]
+	path = packages/foundry/lib/devtools
+	url = https://github.com/LayerZero-Labs/devtools
