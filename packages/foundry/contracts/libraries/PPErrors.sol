@@ -10,4 +10,6 @@ pragma solidity 0.8.30;
 library PPErrors {
     /// @dev
     error WRONGLY_FORMATTED_PARTY_INFO();
+
+    error THIS_IDENTIFIER_ALREADY_EXISTS();
 }

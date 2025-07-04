@@ -8,6 +8,13 @@ import {ClonesWithImmutableArgs} from "@sw0nt/contracts/ClonesWithImmutableArgs.
 import {PPDataTypes} from "../contracts/libraries/PPDataTypes.sol";
 import {PPErrors} from "../contracts/libraries/PPErrors.sol";
 
+/* LayerZero Interfaces */
+import {IOAppComposer} from "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/IOAppComposer.sol";
+import {Origin, OApp} from "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
+
+/* OpenZeppelin libraries */
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+
 /**
  * @title PoolPartyFactory
  * @author https://x.com/0xjsieth
@@ -17,15 +24,72 @@ import {PPErrors} from "../contracts/libraries/PPErrors.sol";
  *   while you delegatecall!
  *
  */
-contract PoolPartyFactory {
-    function deployParty(PPDataTypes.PartyInfo calldata _info) external {
-        if (_info.allowedTokens.length != _info.deployedParties.length)
-            revert PPErrors.WRONGLY_FORMATTED_PARTY_INFO();
-        for (uint256 i; i < _info.allowdTokens.length; ) {
+contract PoolPartyFactory is IOAppComposer, OApp {
+    address public implementation;
+    mapping(uint96 chainId => address partyAddress) public sidePartyAt;
+    mapping(string identifier => PPDataTypes.TokenInfo tokenInfo)
+        public infoOfParty;
+
+    /// @notice Initialize with Endpoint V2 and owner address
+    /// @param _endpoint The local chain's LayerZero Endpoint V2 address
+    /// @param _owner    The address permitted to configure this OApp
+    constructor(
+        address _endpoint,
+        address _owner,
+        address _implementation
+    ) OApp(_endpoint, _owner) Ownable(_owner) {
+        implementation = _implementation;
+    }
+
+    function deployParty(
+        PPDataTypes.DynamicInfo calldata _info,
+        string calldata _identifier,
+        PPDataTypes.TokenInfo calldata _tokenInfo
+    ) external {
+        //if (_info.allowedTokens.length)
+        //revert PPErrors.WRONGLY_FORMATTED_PARTY_INFO();
+
+        if (
+            infoOfParty[_identifier].totalSupply != 0 ||
+            infoOfParty[_identifier].decimals != 0
+        ) revert PPErrors.THIS_IDENTIFIER_ALREADY_EXISTS();
+
+        for (uint256 i; i < _info.allowedTokens.length; ) {
             // Here we should deploy the proxies
             unchecked {
                 i++;
             }
         }
     }
+
+    function updateImplemantation(address _newImplementation) external {
+        implementation = _newImplementation;
+    }
+
+    /**
+     * @notice Handles incoming composed messages from LayerZero.
+     * @dev Ensures the message comes from the correct OApp and is sent through the authorized endpoint.
+     *
+     * @param _oApp The address of the OApp that is sending the composed message.
+     */
+    function lzCompose(
+        address _oApp,
+        bytes32 /* _guid */,
+        bytes calldata /* _message */,
+        address /* _executor */,
+        bytes calldata /* _extraData */
+    ) external payable override {}
+
+    function _lzReceive(
+        Origin calldata /*_origin*/,
+        bytes32 /*_guid*/,
+        bytes calldata /*_message*/,
+        address /*_executor*/,
+        bytes calldata /*_extraData*/
+    ) internal override {}
+
+    function _deployPartyProxy(
+        address[] calldata tokens,
+        string calldata identifier
+    ) internal {}
 }

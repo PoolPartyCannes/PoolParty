@@ -14,13 +14,21 @@ library PPDataTypes {
     ///   associated contracts are deployed
     struct DynamicInfo {
         // 20 bytes (160 bits)
-        address tokenAddress;
+        address dynamicAddress;
         // 12 bytes (96 bits)
-        uint96 tokenId;
+        uint96 chainId;
     }
 
     struct PartyInfo {
         DynamicInfo[] allowedTokens;
         DynamicInfo[] deployedParties;
+    }
+
+    struct TokenInfo {
+        uint256 totalSupply;
+        uint8 decimals;
+        string name;
+        string symbol;
+        bool isOwnable;
     }
 }
