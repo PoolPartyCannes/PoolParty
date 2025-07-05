@@ -11,7 +11,7 @@ import {DeployParty} from "./DeployParty.s.sol";
  * Example: yarn deploy # runs this script(without`--file` flag)
  */
 contract DeployScript is ScaffoldETHDeploy {
-    function run()
+    function run(address _endpoint)
         external
         returns (address _implementation, address _factory)
     {
@@ -19,7 +19,7 @@ contract DeployScript is ScaffoldETHDeploy {
         // Add new deployments here when needed
 
         DeployParty partyDeployer = new DeployParty();
-        (_implementation, _factory) = partyDeployer.run();
+        (_implementation, _factory) = partyDeployer.run(_endpoint);
 
         // Deploy another contract
         // DeployMyContract myContract = new DeployMyContract();
