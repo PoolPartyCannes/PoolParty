@@ -12,6 +12,7 @@ import {PPEvents} from "./libraries/PPEvents.sol";
 /* PoolParty contracts */
 import {PoolParty} from "../contracts/PoolParty.sol";
 import {PartyTokenCore, PartyToken} from "../contracts/PartyToken.sol";
+import {DiamondParty} from "../contracts/DiamondParty.sol";
 
 /* LayerZero Interfaces */
 import {IOAppComposer} from "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/IOAppComposer.sol";
@@ -20,14 +21,6 @@ import {Origin, OApp} from "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
 /* OpenZeppelin libraries */
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-/* Mudgen Contracts */
-import {Diamond} from "@mudgen/contracts/Diamond.sol";
-import {DiamondCutFacet} from "@mudgen/contracts/facets/DiamondCutFacet.sol";
-import {DiamondInit} from "@mudgen/contracts/upgradeInitializers/DiamondInit.sol";
-import {IDiamondCut} from "@mudgen/contracts/interfaces/IDiamondCut.sol";
-
-/* PoolParty Facets */
-import {FullTokenFacet} from "./FullTokenFacet.sol";
 
 /**
  * @title PoolPartyFactory
@@ -38,7 +31,7 @@ import {FullTokenFacet} from "./FullTokenFacet.sol";
  *   while you delegatecall!
  *
  */
-contract PoolPartyFactory is IOAppComposer, OApp {
+contract PoolPartyFactory is IOAppComposer, OApp, DiamondParty {
     using ClonesWithImmutableArgs for address;
     address public implementation;
     address public tokenImplementation;
@@ -123,55 +116,11 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         // Deploy the full token first
         bytes memory data = abi.encodePacked(tokenInfo.decimals, tokenInfo.totalSupply);
         PartyTokenCore core = PartyTokenCore(tokenImplementation.clone(data));
-        core.initialize(tokenInfo.name, tokenInfo.symbol);
+        // Don't initialize the clone directly - we'll initialize the diamond instead
         address partyTokenAdapter = address(new PartyToken(address(core), pEndpoint, msg.sender));
         // Use the core token address for the facet, not the adapter
         address fullToken = address(core);
-
-        // Deploy the diamond with the fullToken as a facet
-        DiamondCutFacet diamondCutFacet = new DiamondCutFacet();
-        Diamond diamond = new Diamond(address(this), address(diamondCutFacet));
-
-        // Deploy the DiamondInit
-        DiamondInit diamondInit = new DiamondInit();
-
-        // Deploy the FullTokenFacet
-        FullTokenFacet fullTokenFacet = new FullTokenFacet();
-        
-        // Define the function selectors for the FullTokenFacet
-        bytes4[] memory fullTokenSelectors = new bytes4[](12);
-        fullTokenSelectors[0] = bytes4(keccak256("initializeFullToken(address)"));
-        fullTokenSelectors[1] = bytes4(keccak256("getFullTokenAddress()"));
-        fullTokenSelectors[2] = bytes4(keccak256("balanceOf(address)"));
-        fullTokenSelectors[3] = bytes4(keccak256("totalSupply()"));
-        fullTokenSelectors[4] = bytes4(keccak256("name()"));
-        fullTokenSelectors[5] = bytes4(keccak256("symbol()"));
-        fullTokenSelectors[6] = bytes4(keccak256("decimals()"));
-        fullTokenSelectors[7] = bytes4(keccak256("transfer(address,uint256)"));
-        fullTokenSelectors[8] = bytes4(keccak256("transferFrom(address,address,uint256)"));
-        fullTokenSelectors[9] = bytes4(keccak256("approve(address,uint256)"));
-        fullTokenSelectors[10] = bytes4(keccak256("allowance(address,address)"));
-        fullTokenSelectors[11] = bytes4(keccak256("fullTokenAddress()"));
-        
-        // Create the facet cut for the FullTokenFacet
-        IDiamondCut.FacetCut[] memory facetCuts = new IDiamondCut.FacetCut[](1);
-        facetCuts[0] = IDiamondCut.FacetCut({
-            facetAddress: address(fullTokenFacet),
-            action: IDiamondCut.FacetCutAction.Add,
-            functionSelectors: fullTokenSelectors
-        });
-        
-        // Cut the facet into the diamond and initialize with DiamondInit
-        IDiamondCut(address(diamond)).diamondCut(
-            facetCuts,
-            address(diamondInit),
-            abi.encodeWithSignature("init()")
-        );
-        
-        // Now initialize the FullTokenFacet with the token address
-        FullTokenFacet(address(diamond)).initializeFullToken(fullToken);
-        
-        _instance = address(diamond);
+        _instance = _diamondsOnMyBankAccount(fullToken, tokenInfo);
     }
 
     function version() external pure returns (uint8 _version) {
