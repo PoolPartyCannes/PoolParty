@@ -281,15 +281,16 @@ const CreateMigraiton: NextPage = () => {
   // };
 
   return (
-    <div className="container mx-auto my-10">
+    <div className="container mx-auto my-10 flex justify-center">
       <form
         onSubmit={handleCreateMigration}
-        className="border-primary bg-base-100 text-base-content placeholder:text-base-content/50 p-2 mr-2 w-full md:w-1/2 lg:w-1/3 rounded-md shadow-md focus:outline-hidden focus:ring-2 focus:ring-accent"
+        className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-white dark:bg-base-100 text-base-content p-8 rounded-xl shadow-lg space-y-6"
       >
+        {/* Contract Address Inputs */}
         {contractAddressInputs.map((contractInput, index) => (
-          <div key={index} className="mb-4 p-3 border rounded-lg">
-            <div className="flex gap-2 items-center mb-2">
-              <label>Contract Address</label>
+          <div key={index} className="border rounded-lg p-4 space-y-4">
+            <div className="flex items-center gap-4">
+              <label className="w-40 text-right whitespace-nowrap">Contract Address</label>
               <AddressInput
                 onChange={e => handleContractAddressChange(index, e)}
                 value={contractInput.address}
@@ -299,70 +300,78 @@ const CreateMigraiton: NextPage = () => {
                 <button
                   type="button"
                   onClick={() => removeContractAddressInput(index)}
-                  className="btn btn-sm btn-primary"
+                  className="btn btn-sm btn-outline btn-error"
                 >
                   ✕
                 </button>
               )}
             </div>
 
-            <div className="flex gap-2 items-center">
-              <label>Chain ID</label>
+            <div className="flex items-center gap-4">
+              <label className="w-40 text-right whitespace-nowrap">Chain ID</label>
               <IntegerInput
                 value={contractInput.chainIdInput}
                 onChange={e => handleChainIdChange(index, e)}
                 placeholder="e.g. 1 (Ethereum)"
               />
             </div>
-            {contractInput.chainIdError && (
-              <span className="text-sm text-red-600 mt-1 block">{contractInput.chainIdError}</span>
-            )}
+
+            {contractInput.chainIdError && <p className="text-sm text-red-600 ml-44">{contractInput.chainIdError}</p>}
           </div>
         ))}
 
-        <button type="button" onClick={addContractAddressInput} className="btn btn-sm btn-primary mb-4">
-          + Add another token to migrate
-        </button>
-
-        <div className="flex gap-2 items-center">
-          <label>New Token Name</label>
-          <InputBase value={newTokenName} onChange={e => setNewTokenName(e)} />
+        <div className="flex justify-end">
+          <button type="button" onClick={addContractAddressInput} className="btn btn-primary btn-sm">
+            + Add another token to migrate
+          </button>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <label>New Token Ticker</label>
-          <InputBase value={newTokenTicker} onChange={e => setNewTokenTicker(e)} />
+        {/* New Token Info Inputs */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <label className="w-40 text-right whitespace-nowrap">New Token Name</label>
+            <InputBase value={newTokenName} onChange={e => setNewTokenName(e)} />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label className="w-40 text-right whitespace-nowrap">New Token Ticker</label>
+            <InputBase value={newTokenTicker} onChange={e => setNewTokenTicker(e)} />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label className="w-40 text-right whitespace-nowrap">New Token Decimals</label>
+            <IntegerInput value={decimalsInput} onChange={handleDecimalsChange} />
+            {decimalsError && <p className="text-sm text-red-600">{decimalsError}</p>}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label className="w-40 text-right whitespace-nowrap">New Token Supply</label>
+            <IntegerInput value={supplyInput} onChange={handleSupplyChange} />
+            {supplyError && <p className="text-sm text-red-600">{supplyError}</p>}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label className="w-40 text-right whitespace-nowrap">New Contract Logic</label>
+            <InputBase value={newContractCodeInput} onChange={e => setNewContractCodeInput(e)} />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label className="w-40 text-right">Ownable</label>
+            <input
+              type="checkbox"
+              checked={newOwnable}
+              onChange={e => setNewOwnable(e.target.checked)}
+              className="toggle toggle-primary"
+            />
+          </div>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <label>New Token Decimals</label>
-          <IntegerInput value={decimalsInput} onChange={e => handleDecimalsChange(e)} />
-
-          {decimalsError && <span className="text-sm text-red-600">{decimalsError}</span>}
+        {/* Submit Button */}
+        <div className="flex justify-end">
+          <button type="submit" className="btn btn-primary">
+            Submit
+          </button>
         </div>
-
-        <div className="flex gap-2 items-center">
-          <label>New Token Supply</label>
-          <IntegerInput value={supplyInput} onChange={e => handleSupplyChange(e)} />
-
-          {supplyError && <span className="text-sm text-red-600">{supplyError}</span>}
-        </div>
-
-        <div className="flex gap-2 items-center">
-          <label>New contract logic</label>
-          <InputBase value={newContractCodeInput} onChange={e => setNewContractCodeInput(e)} />
-        </div>
-
-        <div className="flex gap-2 items-center">
-          <label>
-            <input type="checkbox" checked={newOwnable} onChange={e => setNewOwnable(e.target.checked)} />
-            Ownable
-          </label>
-        </div>
-
-        <button type="submit" className="btn btn-sm btn-primary">
-          Submit
-        </button>
       </form>
     </div>
   );
