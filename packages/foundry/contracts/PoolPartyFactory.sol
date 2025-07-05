@@ -11,6 +11,7 @@ import {PPEvents} from "./libraries/PPEvents.sol";
 
 /* PoolParty contracts */
 import {PoolParty} from "../contracts/PoolParty.sol";
+import {PartyTokenCore, PartyToken} from "../contracts/PartyToken.sol";
 
 /* LayerZero Interfaces */
 import {IOAppComposer} from "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/IOAppComposer.sol";
@@ -32,6 +33,7 @@ contract PoolPartyFactory is IOAppComposer, OApp {
     using ClonesWithImmutableArgs for address;
     address public implementation;
     address public tokenImplementation;
+    address private pEndpoint;
     mapping(uint96 chainId => address partyAddress) public sidePartyAt;
     mapping(string identifier => PPDataTypes.TokenInfo tokenInfo)
         public infoOfParty;
@@ -47,6 +49,7 @@ contract PoolPartyFactory is IOAppComposer, OApp {
     ) OApp(_endpoint, _owner) Ownable(_owner) {
         implementation = _implementation;
         tokenImplementation = _tokenImplementation;
+        pEndpoint = _endpoint;
     }
 
     function deployParty(
@@ -100,8 +103,16 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         );
     }
 
-    function deployToken(string calldata _identifier) external returns (address _instance) {
-        _instance = tokenImplementation.clone(abi.encodePacked(_identifier));
+    function deployToken(
+        string calldata _identifier
+    ) external returns (address _instance) {
+        PPDataTypes.TokenInfo memory tokenInfo = infoOfParty[_identifier];
+        if (tokenInfo.decimals == 0)
+            revert PPErrors.TOKEN_INFO_NOT_SET();
+        bytes memory data = abi.encodePacked(tokenInfo.decimals, tokenInfo.totalSupply);
+        PartyTokenCore core = PartyTokenCore(tokenImplementation.clone(data));
+        core.initialize(tokenInfo.name, tokenInfo.symbol);
+        _instance = address(new PartyToken(address(core), pEndpoint, msg.sender));
     }
 
     function version() external pure returns (uint8 _version) {

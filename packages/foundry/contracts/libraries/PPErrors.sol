@@ -22,4 +22,6 @@ library PPErrors {
     error TOKEN_NOT_AVAILABLE();
 
     error DEPOSIT_FAILED();
+
+    error TOKEN_INFO_NOT_SET();
 }
