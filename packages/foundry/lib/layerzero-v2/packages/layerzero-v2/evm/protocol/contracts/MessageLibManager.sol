@@ -31,7 +31,7 @@ abstract contract MessageLibManager is Ownable, IMessageLibManager {
     mapping(uint32 srcEid => address lib) public defaultReceiveLibrary;
     mapping(uint32 srcEid => Timeout) public defaultReceiveLibraryTimeout;
 
-    constructor() {
+    constructor() Ownable(msg.sender) {
         blockedLibrary = address(new BlockedMessageLib());
         registerLibrary(blockedLibrary);
     }

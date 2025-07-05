@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.30;
 
 import "forge-std/Test.sol";
 
@@ -16,10 +16,30 @@ contract YourContractTest is Test {
 
     function setUp() public {
         DeployScript partyDeployer = new DeployScript();
-        (implementation, factory) = partyDeployer.run();
+        (address implementationAddr, address factoryAddr) = partyDeployer.run();
+        (implementation, factory) = (
+            PoolParty(implementationAddr),
+            PoolPartyFactory(factoryAddr)
+        );
     }
 
-    //    function test_messageOnDeployment() external {
-    //        urequire(keccak256(bytes(yourContract.greeting())) == keccak256("Building Unstoppable Apps!!!"));
-    //    }
+    function test_messageOnDeployment() external view {
+        assertEq(factory.t(), uint8(69), "Test number failed");
+    }
+
+    function _deployOApp(
+        bytes memory _oappBytecode,
+        bytes memory _constructorArgs
+    ) internal returns (address addr) {
+        bytes memory bytecode = bytes.concat(
+            abi.encodePacked(_oappBytecode),
+            _constructorArgs
+        );
+        assembly {
+            addr := create(0, add(bytecode, 0x20), mload(bytecode))
+            if iszero(extcodesize(addr)) {
+                revert(0, 0)
+            }
+        }
+    }
 }

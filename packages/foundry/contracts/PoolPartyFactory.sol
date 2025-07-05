@@ -82,6 +82,10 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         );
     }
 
+    function t() external view returns (uint8 _t) {
+        _t = 69;
+    }
+
     function updateImplemantation(
         address _newImplementation
     ) external onlyOwner {

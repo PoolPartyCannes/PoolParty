@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity 0.8.30;
 
 import "./DeployHelpers.s.sol";
 
 import {PoolPartyFactory} from "../contracts/PoolPartyFactory.sol";
 import {PoolParty} from "../contracts/PoolParty.sol";
+import {EndpointV2} from "@layerzerolabs/lz-evm-protocol-v2/contracts/EndpointV2.sol";
 
 /**
  * @notice Deploy script for YourContract contract
@@ -31,9 +32,30 @@ contract DeployParty is ScaffoldETHDeploy {
         ScaffoldEthDeployerRunner
         returns (address _implementation, address _factory)
     {
+        address endpoint = address(new EndpointV2(1, deployer));
         _implementation = address(new PoolParty());
-        _factory = address(
-            new PoolPartyFactory(address(0), deployer, _implementation)
+        //        _factory = address(
+        //            new PoolPartyFactory(address(0), deployer, _implementation)
+        //        );
+        _factory = _deployOApp(
+            type(PoolPartyFactory).creationCode,
+            abi.encode(endpoint, deployer, _implementation)
         );
+    }
+
+    function _deployOApp(
+        bytes memory _oappBytecode,
+        bytes memory _constructorArgs
+    ) internal returns (address addr) {
+        bytes memory bytecode = bytes.concat(
+            abi.encodePacked(_oappBytecode),
+            _constructorArgs
+        );
+        assembly {
+            addr := create(0, add(bytecode, 0x20), mload(bytecode))
+            if iszero(extcodesize(addr)) {
+                revert(0, 0)
+            }
+        }
     }
 }
