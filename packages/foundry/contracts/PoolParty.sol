@@ -24,6 +24,10 @@ contract PoolParty is Initializable, Clone {
         _disableInitializers();
     }
 
+    function version() external pure returns (uint8 _version) {
+        _version = 1;
+    }
+
     function initialize(string calldata _identifier) external initializer {
         identifier = _identifier;
     }

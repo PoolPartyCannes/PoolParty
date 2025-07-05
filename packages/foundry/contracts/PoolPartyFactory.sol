@@ -73,11 +73,13 @@ contract PoolPartyFactory is IOAppComposer, OApp {
             revert PPErrors.COULD_NOT_DEPLOY_PROXY();
 
         // Create deployedParties array with proper size
-        PPDataTypes.DynamicInfo[] memory deployedParties = new PPDataTypes.DynamicInfo[](1);
-        deployedParties[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: _instances[0],
-            chainId: _info[0].chainId
-        });
+        PPDataTypes.DynamicInfo[] memory deployedParties = new PPDataTypes.DynamicInfo[](_instances.length);
+        if (_instances.length > 0) {
+            deployedParties[0] = PPDataTypes.DynamicInfo({
+                dynamicAddress: _instances[0],
+                chainId: _info[0].chainId
+            });
+        }
         
         emit PPEvents.LetsGetThisPartyStarted(
             msg.sender,
