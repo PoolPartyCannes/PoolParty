@@ -19,4 +19,7 @@ library PPEvents {
 
     /// @dev event when a user has deposited their tokens
     event YouJoinedTheParty(address indexed who, uint256 amount);
+
+    /// @dev event when a crosschain compose msg is received and executed
+    event CrossChainComposeMsgReceived(bytes32 indexed guid, uint32 srcEid);
 }
