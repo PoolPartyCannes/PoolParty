@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     EndpointV2: {
-      address: "0x6379ebd504941f50d5bfde9348b37593bd29c835",
+      address: "0x206c78def956d4a3fd082761c233c7dac02aa89e",
       abi: [
         {
           type: "constructor",
@@ -2394,11 +2394,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1751712122.json",
+      deploymentFile: "run-1751712356.json",
       deploymentScript: "Deploy.s.sol",
     },
     PoolParty: {
-      address: "0x5b3120d0da5fdcba7aef87a9c3c64829c1c0d76b",
+      address: "0x9dc14821a77dc453d7e295a31e6062b7cec85288",
       abi: [
         {
           type: "constructor",
@@ -2456,11 +2456,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1751712122.json",
+      deploymentFile: "run-1751712356.json",
       deploymentScript: "Deploy.s.sol",
     },
     PoolPartyFactory: {
-      address: "0x33b1b5aa9aa4da83a332f0bc5cac6a903fde5d92",
+      address: "0xd4b7eb5fd62fbc23189fe98f945b60b010c3579d",
       abi: [
         {
           type: "constructor",
@@ -2927,6 +2927,32 @@ const deployedContracts = {
         },
         {
           type: "function",
+          name: "testdata",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "testy",
+          inputs: [
+            {
+              name: "param",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
           name: "transferOwnership",
           inputs: [
             {
@@ -3185,7 +3211,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1751712122.json",
+      deploymentFile: "run-1751712356.json",
       deploymentScript: "Deploy.s.sol",
     },
   },

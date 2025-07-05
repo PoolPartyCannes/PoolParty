@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { hardhat } from "viem/chains";
+import { AddressInput, InputBase, IntegerInput } from "~~/components/scaffold-eth";
 import { useFetchBlocks } from "~~/hooks/scaffold-eth";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -15,17 +17,20 @@ interface ContractAddressInput {
   chainIdError: string | null;
 }
 
+type DynamicInfo = {
+  dynamicAddress: string;
+  chainId: bigint;
+};
+
 const CreateMigraiton: NextPage = () => {
   const { error } = useFetchBlocks();
   const { targetNetwork } = useTargetNetwork();
   const [isLocalNetwork, setIsLocalNetwork] = useState(true);
   const [hasError, setHasError] = useState(false);
-
-  // Updated to use object structure for contract addresses with chain IDs
+  const { writeContractAsync } = useScaffoldWriteContract({ contractName: "PoolPartyFactory", chainId: 31337 });
   const [contractAddressInputs, setContractAddressInputs] = useState<ContractAddressInput[]>([
     { address: "", chainId: null, chainIdInput: "", chainIdError: null },
   ]);
-
   const [newTokenName, setNewTokenName] = useState("");
   const [newTokenTicker, setNewTokenTicker] = useState("");
   const [newTokenDecimals, setNewTokenDecimals] = useState<number | null>(null);
@@ -142,10 +147,56 @@ const CreateMigraiton: NextPage = () => {
     setContractAddressInputs(newInputs);
   };
 
-  const handleDecimalsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setDecimalsInput(value);
+  const handleCreateMigration = async () => {
+    const identifier = "iddy";
+    const validContractInputs = contractAddressInputs.filter(
+      input => input.address.trim() !== "" && input.chainId !== null,
+    );
 
+    const tokenInfo = {
+      totalSupply: BigInt(newTokenSupply ?? 0),
+      decimals: newTokenDecimals ?? 0,
+      name: newTokenName ?? "",
+      symbol: newTokenTicker ?? "",
+      isOwnable: newOwnable ?? false,
+    };
+
+    const dynamicInfo: DynamicInfo[] = [];
+
+    validContractInputs.forEach(function (value) {
+      const newDynamicInfo: DynamicInfo = {
+        dynamicAddress: value.address,
+        chainId: BigInt(value.chainId ?? 0),
+      };
+      dynamicInfo.push(newDynamicInfo);
+    });
+    dynamicInfo.forEach(function (v) {
+      console.log(v);
+    });
+
+    console.log("Deploying party: ", dynamicInfo, identifier, tokenInfo);
+
+    try {
+      await writeContractAsync({
+        functionName: "deployParty",
+        args: [
+          dynamicInfo,
+          identifier,
+          tokenInfo,
+          // migrationConfig,           // struct parameter
+          // "0x742d35Cc6634C0532925a3b8D63C4CE4fF5e7a4c", // address parameter
+          // BigInt("1000000000000000000"), // uint256 parameter (1 ETH)
+        ],
+        // value: BigInt("100000000000000000"), // 0.1 ETH if function is payable
+      });
+    } catch (error) {
+      console.error("Transaction failed:", error);
+    }
+  };
+
+  const handleDecimalsChange = (e: string) => {
+    const value = e;
+    setDecimalsInput(value);
     // Only validate if user has typed something
     if (value.trim() === "") {
       setDecimalsError(null);
@@ -170,10 +221,9 @@ const CreateMigraiton: NextPage = () => {
     }
   };
 
-  const handleSupplyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleSupplyChange = (e: string) => {
+    const value = e;
     setSupplyInput(value);
-
     // Only validate if user has typed something
     if (value.trim() === "") {
       setSupplyError(null);
@@ -198,43 +248,52 @@ const CreateMigraiton: NextPage = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
 
-    // Filter out empty contract addresses and prepare data for submission
-    const validContractInputs = contractAddressInputs.filter(
-      input => input.address.trim() !== "" && input.chainId !== null,
-    );
+  //   // Filter out empty contract addresses and prepare data for submission
+  //   const validContractInputs = contractAddressInputs.filter(
+  //     input => input.address.trim() !== "" && input.chainId !== null,
+  //   );
 
-    console.log(
-      "Submitted values:",
-      validContractInputs,
-      newTokenName,
-      newTokenTicker,
-      newTokenDecimals,
-      newTokenSupply,
-      newContractCodeInput,
-      newOwnable,
-    );
-  };
+  //   const dynamicInfoList: DynamicInfo[] = [];
+
+  //   validContractInputs.forEach(function(value){
+  //     const newDynamicInfo: DynamicInfo = {
+  //       dynamicAddress: value.address,
+  //       chainId: BigInt(value.chainId ?? 0),
+  //     };
+  //     dynamicInfoList.push(newDynamicInfo);
+  //   })
+
+  //   console.log(dynamicInfoList);
+
+  //   console.log(
+  //     "Submitted values:",
+  //     validContractInputs,
+  //     newTokenName,
+  //     newTokenTicker,
+  //     newTokenDecimals,
+  //     newTokenSupply,
+  //     newContractCodeInput,
+  //     newOwnable,
+  //   );
+  // };
 
   return (
     <div className="container mx-auto my-10">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleCreateMigration}
         className="border-primary bg-base-100 text-base-content placeholder:text-base-content/50 p-2 mr-2 w-full md:w-1/2 lg:w-1/3 rounded-md shadow-md focus:outline-hidden focus:ring-2 focus:ring-accent"
       >
         {contractAddressInputs.map((contractInput, index) => (
           <div key={index} className="mb-4 p-3 border rounded-lg">
             <div className="flex gap-2 items-center mb-2">
               <label>Contract Address</label>
-              <input
-                type="text"
+              <AddressInput
+                onChange={e => handleContractAddressChange(index, e)}
                 value={contractInput.address}
-                onChange={e => handleContractAddressChange(index, e.target.value)}
-                className="border p-2 rounded flex-1"
                 placeholder="0x..."
-                required={index === 0} // only the first one is required
               />
               {contractAddressInputs.length > 1 && (
                 <button
@@ -249,15 +308,10 @@ const CreateMigraiton: NextPage = () => {
 
             <div className="flex gap-2 items-center">
               <label>Chain ID</label>
-              <input
-                type="text"
+              <IntegerInput
                 value={contractInput.chainIdInput}
-                onChange={e => handleChainIdChange(index, e.target.value)}
-                className={`border p-2 rounded flex-1 ${
-                  contractInput.chainIdError ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="e.g. 1 (Ethereum), 137 (Polygon)"
-                required={index === 0} // only the first one is required
+                onChange={e => handleChainIdChange(index, e)}
+                placeholder="e.g. 1 (Ethereum)"
               />
             </div>
             {contractInput.chainIdError && (
@@ -272,63 +326,31 @@ const CreateMigraiton: NextPage = () => {
 
         <div className="flex gap-2 items-center">
           <label>New Token Name</label>
-          <input
-            type="text"
-            value={newTokenName}
-            onChange={e => setNewTokenName(e.target.value)}
-            className="border p-2 rounded"
-            required
-          />
+          <InputBase value={newTokenName} onChange={e => setNewTokenName(e)} />
         </div>
 
         <div className="flex gap-2 items-center">
           <label>New Token Ticker</label>
-          <input
-            type="text"
-            value={newTokenTicker}
-            onChange={e => setNewTokenTicker(e.target.value)}
-            className="border p-2 rounded"
-            required
-          />
+          <InputBase value={newTokenTicker} onChange={e => setNewTokenTicker(e)} />
         </div>
 
         <div className="flex gap-2 items-center">
           <label>New Token Decimals</label>
-          <input
-            id="decimals"
-            type="text"
-            value={decimalsInput}
-            onChange={handleDecimalsChange}
-            className={`border p-2 rounded ${decimalsError ? "border-red-500" : "border-gray-300"}`}
-            placeholder="e.g. 18"
-            required
-          />
+          <IntegerInput value={decimalsInput} onChange={e => handleDecimalsChange(e)} />
+
           {decimalsError && <span className="text-sm text-red-600">{decimalsError}</span>}
         </div>
 
         <div className="flex gap-2 items-center">
           <label>New Token Supply</label>
-          <input
-            id="supply"
-            type="text"
-            value={supplyInput}
-            onChange={handleSupplyChange}
-            className={`border p-2 rounded ${supplyError ? "border-red-500" : "border-gray-300"}`}
-            placeholder="e.g. 10000000000"
-            required
-          />
+          <IntegerInput value={supplyInput} onChange={e => handleSupplyChange(e)} />
+
           {supplyError && <span className="text-sm text-red-600">{supplyError}</span>}
         </div>
 
         <div className="flex gap-2 items-center">
           <label>New contract logic</label>
-          <input
-            type="text"
-            value={newContractCodeInput}
-            onChange={e => setNewContractCodeInput(e.target.value)}
-            className="border p-2 rounded"
-            required
-          />
+          <InputBase value={newContractCodeInput} onChange={e => setNewContractCodeInput(e)} />
         </div>
 
         <div className="flex gap-2 items-center">
