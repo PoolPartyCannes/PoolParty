@@ -97,7 +97,7 @@ contract PoolPartyFactory is IOAppComposer, OApp {
 
     function updateImplemantation(
         address _newImplementation
-    ) external {
+    ) external onlyOwner {
         implementation = _newImplementation;
     }
 
