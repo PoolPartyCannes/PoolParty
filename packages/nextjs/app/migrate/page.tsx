@@ -5,7 +5,6 @@ import type { NextPage } from "next";
 import { hardhat } from "viem/chains";
 import { AddressInput } from "~~/components/scaffold-eth";
 import { useFetchBlocks } from "~~/hooks/scaffold-eth";
-// import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -16,6 +15,7 @@ const Migrate: NextPage = () => {
   const [hasError, setHasError] = useState(false);
 
   const [poolPartyContractAddress, setPoolPartyContractAddress] = useState("");
+  // const [foundPoolParty, setFoundPoolParty] = useState(false);
 
   useEffect(() => {
     if (targetNetwork.id !== hardhat.id) {
@@ -74,7 +74,7 @@ const Migrate: NextPage = () => {
     }
   }, [hasError]);
 
-  const handleCreateMigration = async () => {
+  const handleLookupPoolParty = async () => {
     // console.log("Deploying party: ", dynamicInfo, identifier, tokenInfo);
     // try {
     //   await writeContractAsync({
@@ -97,7 +97,7 @@ const Migrate: NextPage = () => {
   return (
     <div className="container mx-auto my-10 flex justify-center">
       <form
-        onSubmit={handleCreateMigration}
+        onSubmit={handleLookupPoolParty}
         className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-white dark:bg-base-100 text-base-content p-8 rounded-xl shadow-lg space-y-6"
       >
         <div className="flex items-center gap-4">
@@ -109,6 +109,24 @@ const Migrate: NextPage = () => {
           />
         </div>
       </form>
+
+      {/* {foundPoolParty && 
+      
+      <form
+        onSubmit={handleLookupPoolParty}
+        className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-white dark:bg-base-100 text-base-content p-8 rounded-xl shadow-lg space-y-6"
+      >
+        <div className="flex items-center gap-4">
+          <label className="w-40 text-right whitespace-nowrap">Contract Address</label>
+          <AddressInput
+            onChange={e => setPoolPartyContractAddress(e)}
+            value={poolPartyContractAddress}
+            placeholder="0x..."
+          />
+        </div>
+      </form>
+      
+      } */}
     </div>
   );
 };
