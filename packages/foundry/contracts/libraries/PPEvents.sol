@@ -16,4 +16,7 @@ library PPEvents {
         PPDataTypes.PartyInfo partyInfo,
         PPDataTypes.TokenInfo tokenInfo
     );
+
+    /// @dev event when a user has deposited their tokens
+    event YouJoinedTheParty(address indexed who, uint256 amount);
 }

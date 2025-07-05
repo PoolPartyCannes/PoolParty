@@ -18,4 +18,8 @@ library PPErrors {
     error COULD_NOT_DEPLOY_PROXY();
 
     error OUT_OF_BOUNDS();
+
+    error TOKEN_NOT_AVAILABLE();
+
+    error DEPOSIT_FAILED();
 }

@@ -61,7 +61,7 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         // Initialize array with proper size
         address[] memory tokenArr = new address[](1);
         tokenArr[0] = _info[0].dynamicAddress;
-        
+
         if (uint256(_info[0].chainId) == block.chainid) {
             _instances = new address[](1);
             _instances[0] = _deployPartyProxy(tokenArr, _identifier);
@@ -73,14 +73,17 @@ contract PoolPartyFactory is IOAppComposer, OApp {
             revert PPErrors.COULD_NOT_DEPLOY_PROXY();
 
         // Create deployedParties array with proper size
-        PPDataTypes.DynamicInfo[] memory deployedParties = new PPDataTypes.DynamicInfo[](_instances.length);
+        PPDataTypes.DynamicInfo[]
+            memory deployedParties = new PPDataTypes.DynamicInfo[](
+                _instances.length
+            );
         if (_instances.length > 0) {
             deployedParties[0] = PPDataTypes.DynamicInfo({
                 dynamicAddress: _instances[0],
                 chainId: _info[0].chainId
             });
         }
-        
+
         emit PPEvents.LetsGetThisPartyStarted(
             msg.sender,
             PPDataTypes.PartyInfo({
@@ -133,6 +136,8 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         if (amountOfTokens == 0) revert PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN();
         // Fill the first piece of data with the length of the token array for easier handling of token addresses inside of the pool party
         bytes memory data = abi.encodePacked(uint8(amountOfTokens));
+        // Add this contracts address to the contact too
+        data = bytes.concat(data, abi.encodePacked(address(this)));
         // In order to save gas we're checking if there is 1 or more tokens here...
         if (amountOfTokens > 1) {
             // If there is more...
