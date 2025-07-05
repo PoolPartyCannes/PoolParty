@@ -10,9 +10,6 @@
 [submodule "packages/foundry/lib/clones-with-immutable-args"]
 	path = packages/foundry/lib/clones-with-immutable-args
 	url = https://github.com/wighawag/clones-with-immutable-args
-[submodule "packages/foundry/lib/diamond-2"]
-	path = packages/foundry/lib/diamond-2
-	url = https://github.com/mudgen/diamond-2
 [submodule "lib/layerzero-v2"]
 	path = lib/layerzero-v2
 	url = https://github.com/LayerZero-Labs/layerzero-v2
@@ -34,3 +31,9 @@
 [submodule "packages/foundry/lib/layerzero-v2"]
 	path = packages/foundry/lib/layerzero-v2
 	url = https://github.com/LayerZero-Labs/layerzero-v2
+[submodule "packages/foundry/lib/diamond-2"]
+	path = packages/foundry/lib/diamond-2
+	url = https://github.com/mudgen/diamond-2
+[submodule "packages/foundry/lib/erc-2535-study"]
+	path = packages/foundry/lib/erc-2535-study
+	url = https://github.com/jacksmithinsulander/erc-2535-study

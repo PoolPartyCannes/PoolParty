@@ -54,10 +54,20 @@ contract PartyTokenCore is ERC20, Initializable, Clone {
 }
 
 /// @notice OFTAdapter uses a deployed ERC-20 token and SafeERC20 to interact with the OFTCore contract.
-contract PartyToken is OFTAdapter {
+contract PartyToken is OFTAdapter, Initializable {
     constructor(
         address _token,
         address _lzEndpoint,
         address _owner
-    ) OFTAdapter(_token, _lzEndpoint, _owner) Ownable(_owner) {}
+    ) OFTAdapter(_token, _lzEndpoint, _owner) Ownable(_owner) {
+        _disableInitializers();
+    }
+
+    /**
+     * @dev Override sharedDecimals to return 6 instead of the default.
+     * This ensures compatibility with tokens that have 18 decimals.
+     */
+    function sharedDecimals() public view virtual override returns (uint8) {
+        return 6;
+    }
 }

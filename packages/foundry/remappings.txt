@@ -1,7 +1,7 @@
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
 @solady/contracts/=lib/solady/src
 @sw0nt/contracts/=lib/clones-with-immutable-args/src
-@mudgen/contracts/=lib/diamond-2/contracts
+@mudgen/contracts/=lib/erc-2535-study/src
 @layerzerolabs/oapp-evm/=lib/devtools/packages/oapp-evm
 @layerzerolabs/oft-evm/=lib/devtools/packages/oft-evm
 @layerzerolabs/lz-evm-protocol-v2/=lib/layerzero-v2/packages/layerzero-v2/evm/protocol

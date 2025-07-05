@@ -20,6 +20,15 @@ import {Origin, OApp} from "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
 /* OpenZeppelin libraries */
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
+/* Mudgen Contracts */
+import {Diamond} from "@mudgen/contracts/Diamond.sol";
+import {DiamondCutFacet} from "@mudgen/contracts/facets/DiamondCutFacet.sol";
+import {DiamondInit} from "@mudgen/contracts/upgradeInitializers/DiamondInit.sol";
+import {IDiamondCut} from "@mudgen/contracts/interfaces/IDiamondCut.sol";
+
+/* PoolParty Facets */
+import {FullTokenFacet} from "./FullTokenFacet.sol";
+
 /**
  * @title PoolPartyFactory
  * @author https://x.com/0xjsieth
@@ -53,11 +62,11 @@ contract PoolPartyFactory is IOAppComposer, OApp {
     }
 
     function deployParty(
-        PPDataTypes.DynamicInfo[] calldata _info,
+        PPDataTypes.DynamicInfo[] calldata _acceptedTokens,
         string calldata _identifier,
         PPDataTypes.TokenInfo calldata _tokenInfo
     ) external returns (address[] memory _instances) {
-        if (_info.length == 0) revert PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN();
+        if (_acceptedTokens.length == 0) revert PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN();
         if (
             infoOfParty[_identifier].totalSupply != 0 ||
             infoOfParty[_identifier].decimals != 0
@@ -66,12 +75,12 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         infoOfParty[_identifier] = _tokenInfo;
 
         // Initialize array with proper size for all tokens
-        address[] memory tokenArr = new address[](_info.length);
-        for (uint256 i = 0; i < _info.length; i++) {
-            tokenArr[i] = _info[i].dynamicAddress;
+        address[] memory tokenArr = new address[](_acceptedTokens.length);
+        for (uint256 i = 0; i < _acceptedTokens.length; i++) {
+            tokenArr[i] = _acceptedTokens[i].dynamicAddress;
         }
 
-        if (uint256(_info[0].chainId) == block.chainid) {
+        if (uint256(_acceptedTokens[0].chainId) == block.chainid) {
             _instances = new address[](1);
             _instances[0] = _deployPartyProxy(tokenArr, _identifier);
         } else {
@@ -89,14 +98,14 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         if (_instances.length > 0) {
             deployedParties[0] = PPDataTypes.DynamicInfo({
                 dynamicAddress: _instances[0],
-                chainId: _info[0].chainId
+                chainId: _acceptedTokens[0].chainId
             });
         }
 
         emit PPEvents.LetsGetThisPartyStarted(
             msg.sender,
             PPDataTypes.PartyInfo({
-                allowedTokens: _info,
+                allowedTokens: _acceptedTokens,
                 deployedParties: deployedParties
             }),
             _tokenInfo
@@ -107,12 +116,62 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         string calldata _identifier
     ) external returns (address _instance) {
         PPDataTypes.TokenInfo memory tokenInfo = infoOfParty[_identifier];
+
         if (tokenInfo.decimals == 0)
             revert PPErrors.TOKEN_INFO_NOT_SET();
+
+        // Deploy the full token first
         bytes memory data = abi.encodePacked(tokenInfo.decimals, tokenInfo.totalSupply);
         PartyTokenCore core = PartyTokenCore(tokenImplementation.clone(data));
         core.initialize(tokenInfo.name, tokenInfo.symbol);
-        _instance = address(new PartyToken(address(core), pEndpoint, msg.sender));
+        address partyTokenAdapter = address(new PartyToken(address(core), pEndpoint, msg.sender));
+        // Use the core token address for the facet, not the adapter
+        address fullToken = address(core);
+
+        // Deploy the diamond with the fullToken as a facet
+        DiamondCutFacet diamondCutFacet = new DiamondCutFacet();
+        Diamond diamond = new Diamond(address(this), address(diamondCutFacet));
+
+        // Deploy the DiamondInit
+        DiamondInit diamondInit = new DiamondInit();
+
+        // Deploy the FullTokenFacet
+        FullTokenFacet fullTokenFacet = new FullTokenFacet();
+        
+        // Define the function selectors for the FullTokenFacet
+        bytes4[] memory fullTokenSelectors = new bytes4[](12);
+        fullTokenSelectors[0] = bytes4(keccak256("initializeFullToken(address)"));
+        fullTokenSelectors[1] = bytes4(keccak256("getFullTokenAddress()"));
+        fullTokenSelectors[2] = bytes4(keccak256("balanceOf(address)"));
+        fullTokenSelectors[3] = bytes4(keccak256("totalSupply()"));
+        fullTokenSelectors[4] = bytes4(keccak256("name()"));
+        fullTokenSelectors[5] = bytes4(keccak256("symbol()"));
+        fullTokenSelectors[6] = bytes4(keccak256("decimals()"));
+        fullTokenSelectors[7] = bytes4(keccak256("transfer(address,uint256)"));
+        fullTokenSelectors[8] = bytes4(keccak256("transferFrom(address,address,uint256)"));
+        fullTokenSelectors[9] = bytes4(keccak256("approve(address,uint256)"));
+        fullTokenSelectors[10] = bytes4(keccak256("allowance(address,address)"));
+        fullTokenSelectors[11] = bytes4(keccak256("fullTokenAddress()"));
+        
+        // Create the facet cut for the FullTokenFacet
+        IDiamondCut.FacetCut[] memory facetCuts = new IDiamondCut.FacetCut[](1);
+        facetCuts[0] = IDiamondCut.FacetCut({
+            facetAddress: address(fullTokenFacet),
+            action: IDiamondCut.FacetCutAction.Add,
+            functionSelectors: fullTokenSelectors
+        });
+        
+        // Cut the facet into the diamond and initialize with DiamondInit
+        IDiamondCut(address(diamond)).diamondCut(
+            facetCuts,
+            address(diamondInit),
+            abi.encodeWithSignature("init()")
+        );
+        
+        // Now initialize the FullTokenFacet with the token address
+        FullTokenFacet(address(diamond)).initializeFullToken(fullToken);
+        
+        _instance = address(diamond);
     }
 
     function version() external pure returns (uint8 _version) {

@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity 0.8.30;
 
 import "./DeployHelpers.s.sol";
 import {DeployParty} from "./DeployParty.s.sol";
