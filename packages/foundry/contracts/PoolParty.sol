@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 /* sw0nt contracts */
-import {Clone} from "../lib/clones-with-immutable-args/src/Clone.sol";
+import {Clone} from "@sw0nt/contracts/Clone.sol";
 
 /* solady contracts */
 import {Initializable} from "@solady/contracts/utils/Initializable.sol";

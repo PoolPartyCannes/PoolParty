@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 /* sw0nt libraries */
-import {ClonesWithImmutableArgs} from "../lib/clones-with-immutable-args/src/ClonesWithImmutableArgs.sol";
+import {ClonesWithImmutableArgs} from "@sw0nt/contracts/ClonesWithImmutableArgs.sol";
 
 /* PoolParty libraries */
 import {PPDataTypes} from "./libraries/PPDataTypes.sol";
@@ -89,8 +89,8 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         );
     }
 
-    function t() external pure returns (uint8 _t) {
-        _t = 69;
+    function version() external pure returns (uint8 _version) {
+        _version = 1;
     }
 
     function updateImplemantation(

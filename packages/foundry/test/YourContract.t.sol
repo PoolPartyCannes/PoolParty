@@ -20,7 +20,7 @@ contract YourContractTest is TestHelperOz5 {
         super.setUp();
         setUpEndpoints(1, LibraryType.UltraLightNode);
         DeployScript partyDeployer = new DeployScript();
-        (address implementationAddr, address factoryAddr) = partyDeployer.run(endpoints[0]);
+        (address implementationAddr, address factoryAddr) = partyDeployer.run(endpoints[1]);
         (implementation, factory) = (
             PoolParty(implementationAddr),
             PoolPartyFactory(factoryAddr)
@@ -28,22 +28,6 @@ contract YourContractTest is TestHelperOz5 {
     }
 
     function test_messageOnDeployment() external view {
-        assertEq(factory.t(), uint8(69), "Test number failed");
-    }
-
-    function __deployOApp(
-        bytes memory _oappBytecode,
-        bytes memory _constructorArgs
-    ) internal returns (address addr) {
-        bytes memory bytecode = bytes.concat(
-            abi.encodePacked(_oappBytecode),
-            _constructorArgs
-        );
-        assembly {
-            addr := create(0, add(bytecode, 0x20), mload(bytecode))
-            if iszero(extcodesize(addr)) {
-                revert(0, 0)
-            }
-        }
+        assertEq(factory.version(), uint8(1), "Test version is not found");
     }
 }
