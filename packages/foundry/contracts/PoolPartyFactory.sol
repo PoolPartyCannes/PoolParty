@@ -25,6 +25,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  *
  */
 contract PoolPartyFactory is IOAppComposer, OApp {
+    using ClonesWithImmutableArgs for address;
     address public implementation;
     mapping(uint96 chainId => address partyAddress) public sidePartyAt;
     mapping(string identifier => PPDataTypes.TokenInfo tokenInfo)
@@ -45,21 +46,22 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         PPDataTypes.DynamicInfo calldata _info,
         string calldata _identifier,
         PPDataTypes.TokenInfo calldata _tokenInfo
-    ) external {
+    ) external returns (string memory _testMessage) {
         //if (_info.allowedTokens.length)
         //revert PPErrors.WRONGLY_FORMATTED_PARTY_INFO();
 
-        if (
-            infoOfParty[_identifier].totalSupply != 0 ||
-            infoOfParty[_identifier].decimals != 0
-        ) revert PPErrors.THIS_IDENTIFIER_ALREADY_EXISTS();
+        // if (
+        //    infoOfParty[_identifier].totalSupply != 0 ||
+        //    infoOfParty[_identifier].decimals != 0
+        // ) revert PPErrors.THIS_IDENTIFIER_ALREADY_EXISTS();
 
-        for (uint256 i; i < _info.allowedTokens.length; ) {
-            // Here we should deploy the proxies
-            unchecked {
-                i++;
-            }
-        }
+        //for (uint256 i; i < _info.allowedTokens.length; ) {
+        // Here we should deploy the proxies
+        //    unchecked {
+        //        i++;
+        //    }
+        //}
+        _testMessage = "Hello";
     }
 
     function updateImplemantation(address _newImplementation) external {
