@@ -193,7 +193,7 @@ function processAllDeployments(broadcastPath) {
   return allContracts;
 }
 
-function main() {
+async function main() {
   const current_path_to_broadcast = join(__dirname, "..", "broadcast");
   const current_path_to_deployments = join(__dirname, "..", "deployments");
 
@@ -256,11 +256,13 @@ function main() {
     export default deployedContracts satisfies GenericContractsDeclaration;
   `;
 
+  const formattedContent = await format(fileTemplate("~~/utils/scaffold-eth/contract"), {
+    parser: "typescript",
+  });
+
   writeFileSync(
     `${NEXTJS_TARGET_DIR}deployedContracts.ts`,
-    format(fileTemplate("~~/utils/scaffold-eth/contract"), {
-      parser: "typescript",
-    })
+    formattedContent
   );
 
   console.log(
@@ -269,7 +271,7 @@ function main() {
 }
 
 try {
-  main();
+  await main();
 } catch (error) {
   console.error("Error:", error);
   process.exitCode = 1;

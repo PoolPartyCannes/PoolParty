@@ -3,6 +3,8 @@ src = 'contracts'
 out = 'out'
 libs = ['lib']
 fs_permissions = [{ access = "read-write", path = "./" }]
+optimizer = true
+optimizer_runs = 200
 
 
 [rpc_endpoints]
@@ -35,12 +37,12 @@ polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
 
 
-#[fmt]
-#line_length = 120
-#tab_width = 4
-#quote_style = "double"
-#bracket_spacing = true
-#int_types = "long"
+[fmt]
+line_length = 120
+tab_width = 4
+quote_style = "double"
+bracket_spacing = true
+int_types = "long"
 
 
 # See more config options https://book.getfoundry.sh/reference/config/overview

@@ -11,6 +11,7 @@
     "clean": "forge clean",
     "compile": "make compile",
     "deploy": "node scripts-js/parseArgs.js",
+    "format": "make format",
     "flatten": "make flatten",
     "fork": "make fork FORK_URL=${1:-mainnet}",
     "postinstall": "shx cp -n .env.example .env",
@@ -22,7 +23,8 @@
     "envfile": "~6.18.0",
     "ethers": "~5.7.1",
     "qrcode": "~1.5.3",
-    "toml": "~3.0.0"
+    "toml": "~3.0.0",
+    "prettier": "~2.8.8"
   },
   "devDependencies": {
     "shx": "^0.3.4"

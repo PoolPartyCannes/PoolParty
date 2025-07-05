@@ -58,20 +58,27 @@ contract PoolPartyFactory is IOAppComposer, OApp {
 
         infoOfParty[_identifier] = _tokenInfo;
 
-        address[] memory tokenArr;
-        tokenArr[0] = (_info[0].dynamicAddress);
+        // Initialize array with proper size
+        address[] memory tokenArr = new address[](1);
+        tokenArr[0] = _info[0].dynamicAddress;
+        
         if (uint256(_info[0].chainId) == block.chainid) {
+            _instances = new address[](1);
             _instances[0] = _deployPartyProxy(tokenArr, _identifier);
+        } else {
+            _instances = new address[](0);
         }
 
-        if (_instances[0] == address(0))
+        if (_instances.length > 0 && _instances[0] == address(0))
             revert PPErrors.COULD_NOT_DEPLOY_PROXY();
 
-        PPDataTypes.DynamicInfo[] memory deployedParties;
+        // Create deployedParties array with proper size
+        PPDataTypes.DynamicInfo[] memory deployedParties = new PPDataTypes.DynamicInfo[](1);
         deployedParties[0] = PPDataTypes.DynamicInfo({
             dynamicAddress: _instances[0],
             chainId: _info[0].chainId
         });
+        
         emit PPEvents.LetsGetThisPartyStarted(
             msg.sender,
             PPDataTypes.PartyInfo({

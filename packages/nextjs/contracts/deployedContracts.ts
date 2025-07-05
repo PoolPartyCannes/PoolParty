@@ -4,6 +4,3191 @@
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  31337: {
+    EndpointV2: {
+      address: "0x6379ebd504941f50d5bfde9348b37593bd29c835",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "EMPTY_PAYLOAD_HASH",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "NIL_PAYLOAD_HASH",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "blockedLibrary",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "burn",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_sender",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_nonce",
+              type: "uint64",
+              internalType: "uint64",
+            },
+            {
+              name: "_payloadHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "clear",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_origin",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "_guid",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_message",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "composeQueue",
+          inputs: [
+            {
+              name: "from",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "to",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "guid",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "index",
+              type: "uint16",
+              internalType: "uint16",
+            },
+          ],
+          outputs: [
+            {
+              name: "messageHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "defaultReceiveLibrary",
+          inputs: [
+            {
+              name: "srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "lib",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "defaultReceiveLibraryTimeout",
+          inputs: [
+            {
+              name: "srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "lib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "expiry",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "defaultSendLibrary",
+          inputs: [
+            {
+              name: "dstEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "lib",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "delegates",
+          inputs: [
+            {
+              name: "oapp",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "delegate",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "eid",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getConfig",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_lib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_configType",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "config",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getReceiveLibrary",
+          inputs: [
+            {
+              name: "_receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "lib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "isDefault",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getRegisteredLibraries",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address[]",
+              internalType: "address[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getSendContext",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getSendLibrary",
+          inputs: [
+            {
+              name: "_sender",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_dstEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "lib",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "inboundNonce",
+          inputs: [
+            {
+              name: "_receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_sender",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint64",
+              internalType: "uint64",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "inboundPayloadHash",
+          inputs: [
+            {
+              name: "receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "sender",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "inboundNonce",
+              type: "uint64",
+              internalType: "uint64",
+            },
+          ],
+          outputs: [
+            {
+              name: "payloadHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "initializable",
+          inputs: [
+            {
+              name: "_origin",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "_receiver",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isDefaultSendLibrary",
+          inputs: [
+            {
+              name: "_sender",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_dstEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isRegisteredLibrary",
+          inputs: [
+            {
+              name: "lib",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isSendingMessage",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isSupportedEid",
+          inputs: [
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isValidReceiveLibrary",
+          inputs: [
+            {
+              name: "_receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_actualReceiveLib",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "lazyInboundNonce",
+          inputs: [
+            {
+              name: "receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "sender",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "nonce",
+              type: "uint64",
+              internalType: "uint64",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "lzCompose",
+          inputs: [
+            {
+              name: "_from",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_to",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_guid",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_index",
+              type: "uint16",
+              internalType: "uint16",
+            },
+            {
+              name: "_message",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "_extraData",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "lzComposeAlert",
+          inputs: [
+            {
+              name: "_from",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_to",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_guid",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_index",
+              type: "uint16",
+              internalType: "uint16",
+            },
+            {
+              name: "_gas",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "_value",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "_message",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "_extraData",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "_reason",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "lzReceive",
+          inputs: [
+            {
+              name: "_origin",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "_receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_guid",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_message",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "_extraData",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "lzReceiveAlert",
+          inputs: [
+            {
+              name: "_origin",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "_receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_guid",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_gas",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "_value",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "_message",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "_extraData",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "_reason",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "lzToken",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "nativeToken",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "nextGuid",
+          inputs: [
+            {
+              name: "_sender",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_dstEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_receiver",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "nilify",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_sender",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_nonce",
+              type: "uint64",
+              internalType: "uint64",
+            },
+            {
+              name: "_payloadHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "outboundNonce",
+          inputs: [
+            {
+              name: "sender",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "dstEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "receiver",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "nonce",
+              type: "uint64",
+              internalType: "uint64",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "owner",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "quote",
+          inputs: [
+            {
+              name: "_params",
+              type: "tuple",
+              internalType: "struct MessagingParams",
+              components: [
+                {
+                  name: "dstEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "receiver",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "message",
+                  type: "bytes",
+                  internalType: "bytes",
+                },
+                {
+                  name: "options",
+                  type: "bytes",
+                  internalType: "bytes",
+                },
+                {
+                  name: "payInLzToken",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+            {
+              name: "_sender",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct MessagingFee",
+              components: [
+                {
+                  name: "nativeFee",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "lzTokenFee",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "receiveLibraryTimeout",
+          inputs: [
+            {
+              name: "receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "lib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "expiry",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "recoverToken",
+          inputs: [
+            {
+              name: "_token",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_to",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_amount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "registerLibrary",
+          inputs: [
+            {
+              name: "_lib",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "renounceOwnership",
+          inputs: [],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "send",
+          inputs: [
+            {
+              name: "_params",
+              type: "tuple",
+              internalType: "struct MessagingParams",
+              components: [
+                {
+                  name: "dstEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "receiver",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "message",
+                  type: "bytes",
+                  internalType: "bytes",
+                },
+                {
+                  name: "options",
+                  type: "bytes",
+                  internalType: "bytes",
+                },
+                {
+                  name: "payInLzToken",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+            {
+              name: "_refundAddress",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct MessagingReceipt",
+              components: [
+                {
+                  name: "guid",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+                {
+                  name: "fee",
+                  type: "tuple",
+                  internalType: "struct MessagingFee",
+                  components: [
+                    {
+                      name: "nativeFee",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "lzTokenFee",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "sendCompose",
+          inputs: [
+            {
+              name: "_to",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_guid",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_index",
+              type: "uint16",
+              internalType: "uint16",
+            },
+            {
+              name: "_message",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setConfig",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_lib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_params",
+              type: "tuple[]",
+              internalType: "struct SetConfigParam[]",
+              components: [
+                {
+                  name: "eid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "configType",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "config",
+                  type: "bytes",
+                  internalType: "bytes",
+                },
+              ],
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setDefaultReceiveLibrary",
+          inputs: [
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_newLib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_gracePeriod",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setDefaultReceiveLibraryTimeout",
+          inputs: [
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_lib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_expiry",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setDefaultSendLibrary",
+          inputs: [
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_newLib",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setDelegate",
+          inputs: [
+            {
+              name: "_delegate",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setLzToken",
+          inputs: [
+            {
+              name: "_lzToken",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setReceiveLibrary",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_newLib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_gracePeriod",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setReceiveLibraryTimeout",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_lib",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_expiry",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setSendLibrary",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_newLib",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "skip",
+          inputs: [
+            {
+              name: "_oapp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_srcEid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_sender",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_nonce",
+              type: "uint64",
+              internalType: "uint64",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "transferOwnership",
+          inputs: [
+            {
+              name: "newOwner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "verifiable",
+          inputs: [
+            {
+              name: "_origin",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "_receiver",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "verify",
+          inputs: [
+            {
+              name: "_origin",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "_receiver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_payloadHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "ComposeDelivered",
+          inputs: [
+            {
+              name: "from",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "to",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "guid",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+            {
+              name: "index",
+              type: "uint16",
+              indexed: false,
+              internalType: "uint16",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "ComposeSent",
+          inputs: [
+            {
+              name: "from",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "to",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "guid",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+            {
+              name: "index",
+              type: "uint16",
+              indexed: false,
+              internalType: "uint16",
+            },
+            {
+              name: "message",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "DefaultReceiveLibrarySet",
+          inputs: [
+            {
+              name: "eid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "newLib",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "DefaultReceiveLibraryTimeoutSet",
+          inputs: [
+            {
+              name: "eid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "oldLib",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "expiry",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "DefaultSendLibrarySet",
+          inputs: [
+            {
+              name: "eid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "newLib",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "DelegateSet",
+          inputs: [
+            {
+              name: "sender",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "delegate",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "InboundNonceSkipped",
+          inputs: [
+            {
+              name: "srcEid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "sender",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+            {
+              name: "receiver",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "nonce",
+              type: "uint64",
+              indexed: false,
+              internalType: "uint64",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "LibraryRegistered",
+          inputs: [
+            {
+              name: "newLib",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "LzComposeAlert",
+          inputs: [
+            {
+              name: "from",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "to",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "executor",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "guid",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+            {
+              name: "index",
+              type: "uint16",
+              indexed: false,
+              internalType: "uint16",
+            },
+            {
+              name: "gas",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "value",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "message",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+            {
+              name: "extraData",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+            {
+              name: "reason",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "LzReceiveAlert",
+          inputs: [
+            {
+              name: "receiver",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "executor",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "origin",
+              type: "tuple",
+              indexed: false,
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "guid",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+            {
+              name: "gas",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "value",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "message",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+            {
+              name: "extraData",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+            {
+              name: "reason",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "LzTokenSet",
+          inputs: [
+            {
+              name: "token",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "OwnershipTransferred",
+          inputs: [
+            {
+              name: "previousOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PacketBurnt",
+          inputs: [
+            {
+              name: "srcEid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "sender",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+            {
+              name: "receiver",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "nonce",
+              type: "uint64",
+              indexed: false,
+              internalType: "uint64",
+            },
+            {
+              name: "payloadHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PacketDelivered",
+          inputs: [
+            {
+              name: "origin",
+              type: "tuple",
+              indexed: false,
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "receiver",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PacketNilified",
+          inputs: [
+            {
+              name: "srcEid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "sender",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+            {
+              name: "receiver",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "nonce",
+              type: "uint64",
+              indexed: false,
+              internalType: "uint64",
+            },
+            {
+              name: "payloadHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PacketSent",
+          inputs: [
+            {
+              name: "encodedPayload",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+            {
+              name: "options",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+            {
+              name: "sendLibrary",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PacketVerified",
+          inputs: [
+            {
+              name: "origin",
+              type: "tuple",
+              indexed: false,
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "receiver",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "payloadHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "ReceiveLibrarySet",
+          inputs: [
+            {
+              name: "receiver",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "eid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "newLib",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "ReceiveLibraryTimeoutSet",
+          inputs: [
+            {
+              name: "receiver",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "eid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "oldLib",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "timeout",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "SendLibrarySet",
+          inputs: [
+            {
+              name: "sender",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "eid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "newLib",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "LZ_AlreadyRegistered",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_ComposeExists",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_ComposeNotFound",
+          inputs: [
+            {
+              name: "expected",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "actual",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "LZ_DefaultReceiveLibUnavailable",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_DefaultSendLibUnavailable",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_InsufficientFee",
+          inputs: [
+            {
+              name: "requiredNative",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "suppliedNative",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "requiredLzToken",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "suppliedLzToken",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "LZ_InvalidExpiry",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_InvalidNonce",
+          inputs: [
+            {
+              name: "nonce",
+              type: "uint64",
+              internalType: "uint64",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "LZ_InvalidPayloadHash",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_InvalidReceiveLibrary",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_LzTokenUnavailable",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_OnlyNonDefaultLib",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_OnlyReceiveLib",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_OnlyRegisteredLib",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_OnlyRegisteredOrDefaultLib",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_OnlySendLib",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_PathNotInitializable",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_PathNotVerifiable",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_PayloadHashNotFound",
+          inputs: [
+            {
+              name: "expected",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "actual",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "LZ_SameValue",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_SendReentrancy",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_Unauthorized",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_UnsupportedEid",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_UnsupportedInterface",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LZ_ZeroLzTokenFee",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "OwnableInvalidOwner",
+          inputs: [
+            {
+              name: "owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OwnableUnauthorizedAccount",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "SafeERC20FailedOperation",
+          inputs: [
+            {
+              name: "token",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "Transfer_NativeFailed",
+          inputs: [
+            {
+              name: "_to",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_value",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "Transfer_ToAddressIsZero",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1751712122.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    PoolParty: {
+      address: "0x5b3120d0da5fdcba7aef87a9c3c64829c1c0d76b",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "identifier",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "initialize",
+          inputs: [
+            {
+              name: "_identifier",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "Initialized",
+          inputs: [
+            {
+              name: "version",
+              type: "uint64",
+              indexed: false,
+              internalType: "uint64",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "InvalidInitialization",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "NotInitializing",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1751712122.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    PoolPartyFactory: {
+      address: "0x33b1b5aa9aa4da83a332f0bc5cac6a903fde5d92",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "_endpoint",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_owner",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_implementation",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "allowInitializePath",
+          inputs: [
+            {
+              name: "origin",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "deployParty",
+          inputs: [
+            {
+              name: "_info",
+              type: "tuple[]",
+              internalType: "struct PPDataTypes.DynamicInfo[]",
+              components: [
+                {
+                  name: "dynamicAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "chainId",
+                  type: "uint96",
+                  internalType: "uint96",
+                },
+              ],
+            },
+            {
+              name: "_identifier",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "_tokenInfo",
+              type: "tuple",
+              internalType: "struct PPDataTypes.TokenInfo",
+              components: [
+                {
+                  name: "totalSupply",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "decimals",
+                  type: "uint8",
+                  internalType: "uint8",
+                },
+                {
+                  name: "name",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "symbol",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "isOwnable",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          outputs: [
+            {
+              name: "_instances",
+              type: "address[]",
+              internalType: "address[]",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "endpoint",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract ILayerZeroEndpointV2",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "implementation",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "infoOfParty",
+          inputs: [
+            {
+              name: "identifier",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "totalSupply",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "decimals",
+              type: "uint8",
+              internalType: "uint8",
+            },
+            {
+              name: "name",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "symbol",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "isOwnable",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isComposeMsgSender",
+          inputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "_sender",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "lzCompose",
+          inputs: [
+            {
+              name: "_oApp",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "lzReceive",
+          inputs: [
+            {
+              name: "_origin",
+              type: "tuple",
+              internalType: "struct Origin",
+              components: [
+                {
+                  name: "srcEid",
+                  type: "uint32",
+                  internalType: "uint32",
+                },
+                {
+                  name: "sender",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "nonce",
+                  type: "uint64",
+                  internalType: "uint64",
+                },
+              ],
+            },
+            {
+              name: "_guid",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "_message",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "_executor",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_extraData",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "nextNonce",
+          inputs: [
+            {
+              name: "",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "nonce",
+              type: "uint64",
+              internalType: "uint64",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "oAppVersion",
+          inputs: [],
+          outputs: [
+            {
+              name: "senderVersion",
+              type: "uint64",
+              internalType: "uint64",
+            },
+            {
+              name: "receiverVersion",
+              type: "uint64",
+              internalType: "uint64",
+            },
+          ],
+          stateMutability: "pure",
+        },
+        {
+          type: "function",
+          name: "owner",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "peers",
+          inputs: [
+            {
+              name: "eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+          outputs: [
+            {
+              name: "peer",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "renounceOwnership",
+          inputs: [],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setDelegate",
+          inputs: [
+            {
+              name: "_delegate",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setPeer",
+          inputs: [
+            {
+              name: "_eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "_peer",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "sidePartyAt",
+          inputs: [
+            {
+              name: "chainId",
+              type: "uint96",
+              internalType: "uint96",
+            },
+          ],
+          outputs: [
+            {
+              name: "partyAddress",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "t",
+          inputs: [],
+          outputs: [
+            {
+              name: "_t",
+              type: "uint8",
+              internalType: "uint8",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "transferOwnership",
+          inputs: [
+            {
+              name: "newOwner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "updateImplemantation",
+          inputs: [
+            {
+              name: "_newImplementation",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "LetsGetThisPartyStarted",
+          inputs: [
+            {
+              name: "creator",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "partyInfo",
+              type: "tuple",
+              indexed: false,
+              internalType: "struct PPDataTypes.PartyInfo",
+              components: [
+                {
+                  name: "allowedTokens",
+                  type: "tuple[]",
+                  internalType: "struct PPDataTypes.DynamicInfo[]",
+                  components: [
+                    {
+                      name: "dynamicAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "chainId",
+                      type: "uint96",
+                      internalType: "uint96",
+                    },
+                  ],
+                },
+                {
+                  name: "deployedParties",
+                  type: "tuple[]",
+                  internalType: "struct PPDataTypes.DynamicInfo[]",
+                  components: [
+                    {
+                      name: "dynamicAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "chainId",
+                      type: "uint96",
+                      internalType: "uint96",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "tokenInfo",
+              type: "tuple",
+              indexed: false,
+              internalType: "struct PPDataTypes.TokenInfo",
+              components: [
+                {
+                  name: "totalSupply",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "decimals",
+                  type: "uint8",
+                  internalType: "uint8",
+                },
+                {
+                  name: "name",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "symbol",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "isOwnable",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "OwnershipTransferred",
+          inputs: [
+            {
+              name: "previousOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PeerSet",
+          inputs: [
+            {
+              name: "eid",
+              type: "uint32",
+              indexed: false,
+              internalType: "uint32",
+            },
+            {
+              name: "peer",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "COULD_NOT_DEPLOY_PROXY",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "CreateFail",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "InvalidDelegate",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "InvalidEndpointCall",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "LzTokenUnavailable",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "MUST_BE_AT_LEAST_ONE_TOKEN",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "NoPeer",
+          inputs: [
+            {
+              name: "eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "NotEnoughNative",
+          inputs: [
+            {
+              name: "msgValue",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OnlyEndpoint",
+          inputs: [
+            {
+              name: "addr",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OnlyPeer",
+          inputs: [
+            {
+              name: "eid",
+              type: "uint32",
+              internalType: "uint32",
+            },
+            {
+              name: "sender",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OwnableInvalidOwner",
+          inputs: [
+            {
+              name: "owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OwnableUnauthorizedAccount",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "THIS_IDENTIFIER_ALREADY_EXISTS",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1751712122.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+  },
+} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;
