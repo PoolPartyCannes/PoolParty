@@ -24,4 +24,8 @@ library PPErrors {
     error DEPOSIT_FAILED();
 
     error TOKEN_INFO_NOT_SET();
+
+    error NOT_LAYER_ZERO_ENDPOINT();
+
+    error NOT_OAPP();
 }
