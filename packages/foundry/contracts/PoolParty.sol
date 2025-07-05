@@ -12,6 +12,10 @@ import {ERC20} from "@solady/contracts/tokens/ERC20.sol";
 /* PoolParty libraries */
 import {PPErrors} from "./libraries/PPErrors.sol";
 import {PPEvents} from "./libraries/PPEvents.sol";
+import {PPDataTypes} from "./libraries/PPDataTypes.sol";
+
+/* PoolParty Interfaces */
+import {IPoolPartyFactory} from "./interfaces/IPoolPartyFactory.sol";
 
 /**
  * @title PoolParty
@@ -39,7 +43,7 @@ contract PoolParty is Initializable, Clone {
         identifier = _identifier;
     }
 
-    function factory() external pure returns (address _factory) {
+    function factory() public pure returns (address _factory) {
         _factory = _getArgAddress(1);
     }
 
@@ -80,5 +84,13 @@ contract PoolParty is Initializable, Clone {
         _token = _getArgAddress(21 + _index * 20);
 
         return _token;
+    }
+
+    function newTokenInfo()
+        external
+        view
+        returns (PPDataTypes.TokenInfo memory _info)
+    {
+        _info = IPoolPartyFactory(factory()).infoOfParty(identifier);
     }
 }

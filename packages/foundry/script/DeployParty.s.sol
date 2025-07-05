@@ -5,6 +5,7 @@ import "./DeployHelpers.s.sol";
 
 import {PoolPartyFactory} from "../contracts/PoolPartyFactory.sol";
 import {PoolParty} from "../contracts/PoolParty.sol";
+import {PartyTokenCore} from "../contracts/PartyToken.sol";
 import {TestHelperOz5} from "@layerzerolabs/test-devtools-evm-foundry/contracts/TestHelperOz5.sol";
 
 /**
@@ -27,18 +28,35 @@ contract DeployParty is ScaffoldETHDeploy {
      *      - Setup correct `deployer` account and fund it
      *      - Export contract addresses & ABIs to `nextjs` packages
      */
-    function run(address _endpoint)
+    function run(
+        address _endpoint
+    )
         external
         ScaffoldEthDeployerRunner
-        returns (address _implementation, address _factory)
+        returns (
+            address _implementation,
+            address _tokenImplementation,
+            address _factory
+        )
     {
         // Deploy the implementation contract first (no constructor parameters)
         _implementation = address(new PoolParty());
 
+        // Deploy the token implementation
+        _tokenImplementation = address(new PartyTokenCore());
+
+        // Token deployed
+        _tokenImplementation = address();
+
         // Then deploy the factory with the implementation address
         _factory = _deployOApp(
             type(PoolPartyFactory).creationCode,
-            abi.encode(_endpoint, deployer, _implementation)
+            abi.encode(
+                _endpoint,
+                deployer,
+                _implementation,
+                _tokenImplementation
+            )
         );
     }
 

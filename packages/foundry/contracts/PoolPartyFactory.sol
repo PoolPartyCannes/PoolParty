@@ -31,6 +31,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 contract PoolPartyFactory is IOAppComposer, OApp {
     using ClonesWithImmutableArgs for address;
     address public implementation;
+    address public tokenImplementation;
     mapping(uint96 chainId => address partyAddress) public sidePartyAt;
     mapping(string identifier => PPDataTypes.TokenInfo tokenInfo)
         public infoOfParty;
@@ -41,9 +42,11 @@ contract PoolPartyFactory is IOAppComposer, OApp {
     constructor(
         address _endpoint,
         address _owner,
-        address _implementation
+        address _implementation,
+        address _tokenImplementation
     ) OApp(_endpoint, _owner) Ownable(_owner) {
         implementation = _implementation;
+        tokenImplementation = _tokenImplementation;
     }
 
     function deployParty(
@@ -102,6 +105,12 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         address _newImplementation
     ) external onlyOwner {
         implementation = _newImplementation;
+    }
+
+    function updateTokenImplemantation(
+        address _newTokenImplementation
+    ) external onlyOwner {
+        tokenImplementation = _newTokenImplementation;
     }
 
     /**
