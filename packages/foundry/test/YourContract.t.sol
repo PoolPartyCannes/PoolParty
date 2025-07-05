@@ -12,6 +12,7 @@ import {PoolParty} from "../contracts/PoolParty.sol";
 
 /* Our libraries */
 import {PPDataTypes} from "../contracts/libraries/PPDataTypes.sol";
+import {PPErrors} from "../contracts/libraries/PPErrors.sol";
 
 /* Mock Contracts */
 import {ERC20Mock} from "./mocks/ERC20Mock.sol";
@@ -61,5 +62,8 @@ contract YourContractTest is TestHelperOz5 {
         assertNotEq(address(instance), address(0), "Instance is not deployed");
         assertEq(instance.version(), uint8(1), "Instance version is not found");
         assertEq(instance.identifier(), "test", "Instance identifier is not found");
+        vm.expectRevert(PPErrors.OUT_OF_BOUNDS.selector);
+        instance.getTokenOfIndex(1);
+        assertEq(instance.getTokenOfIndex(0), address(token), "Token is not found");
     }
 }

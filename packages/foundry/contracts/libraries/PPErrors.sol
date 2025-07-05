@@ -16,4 +16,6 @@ library PPErrors {
     error MUST_BE_AT_LEAST_ONE_TOKEN();
 
     error COULD_NOT_DEPLOY_PROXY();
+
+    error OUT_OF_BOUNDS();
 }

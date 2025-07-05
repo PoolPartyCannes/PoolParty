@@ -7,8 +7,8 @@ import {Clone} from "@sw0nt/contracts/Clone.sol";
 /* solady contracts */
 import {Initializable} from "@solady/contracts/utils/Initializable.sol";
 
-/* OpenZeppelin libraries */
-// import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
+/* PoolParty libraries */
+import {PPErrors} from "./libraries/PPErrors.sol";
 
 /**
  * @title PoolParty
@@ -30,5 +30,14 @@ contract PoolParty is Initializable, Clone {
 
     function initialize(string calldata _identifier) external initializer {
         identifier = _identifier;
+    }
+
+    function getTokenOfIndex(uint256 _index) external pure returns (address _token) {
+        uint256 amountOfTokens = _getArgUint8(0);
+        if (_index >= amountOfTokens) revert PPErrors.OUT_OF_BOUNDS();
+
+        _token = _getArgAddress(1 + _index * 20);
+
+        return _token;
     }
 }
