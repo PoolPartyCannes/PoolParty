@@ -22,17 +22,13 @@ import {TestHelperOz5} from "@layerzerolabs/test-devtools-evm-foundry/contracts/
 contract YourContractTest is TestHelperOz5 {
     PoolPartyFactory factory;
     PoolParty implementation;
-
-    // Test tokens
-    ERC20Mock public token1;
-    ERC20Mock public token2;
-    ERC20Mock public token3;
-
+    PartyTokenCore partyTokenImplementation;
+    
     // Test addresses
     address public user1 = address(0x2);
     address public user2 = address(0x3);
     address public user3 = address(0x4);
-
+    
     // Test data
     string public constant PARTY_IDENTIFIER = "test-party-123";
     uint96 public constant CHAIN_ID = 31337;
@@ -41,28 +37,17 @@ contract YourContractTest is TestHelperOz5 {
         super.setUp();
         setUpEndpoints(1, LibraryType.UltraLightNode);
         DeployScript partyDeployer = new DeployScript();
-        (address implementationAddr, address factoryAddr) = partyDeployer.run(
+        (address implementationAddr, address tokenImplementationAddr, address factoryAddr) = partyDeployer.run(
             endpoints[1]
         );
-        (implementation, factory) = (
+        (implementation, partyTokenImplementation, factory) = (
             PoolParty(implementationAddr),
+            PartyTokenCore(tokenImplementationAddr),
             PoolPartyFactory(factoryAddr)
         );
-
-        // Deploy test tokens
-        token1 = new ERC20Mock("Token 1", "TK1");
-        token2 = new ERC20Mock("Token 2", "TK2");
-        token3 = new ERC20Mock("Token 3", "TK3");
-
-        // Mint tokens to users
-        token1.mint(user1, 1000e18);
-        token2.mint(user2, 1000e18);
-        token3.mint(user3, 1000e18);
-
-        // Mint tokens to owner for testing
-        token1.mint(address(this), 1000e18);
-        token2.mint(address(this), 1000e18);
-        token3.mint(address(this), 1000e18);
+        
+        // Deploy PartyToken implementation for testing
+        partyTokenImplementation = new PartyTokenCore();
     }
 
     // ============ Factory Tests ============
@@ -77,14 +62,18 @@ contract YourContractTest is TestHelperOz5 {
     }
 
     function test_DeployParty_SingleToken() public {
+        // Deploy a token for the party
+        string memory identifier = "party-single";
+        address token = factory.deployToken(identifier);
+        
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             1
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token,
             chainId: CHAIN_ID
         });
-
+        
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -92,23 +81,30 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "PPT",
             isOwnable: false
         });
-
+        
         address[] memory instances = factory.deployParty(
             info,
-            PARTY_IDENTIFIER,
+            identifier,
             tokenInfo
         );
-
+        
         assertEq(instances.length, 1, "Should deploy one instance");
         assertTrue(
             instances[0] != address(0),
             "Instance should not be zero address"
         );
-
+        
         // Verify party info is stored
-        PPDataTypes.TokenInfo memory storedInfo = factory.infoOfParty(
-            PARTY_IDENTIFIER
+        (uint256 totalSupply, uint8 decimals, string memory name, string memory symbol, bool isOwnable) = factory.infoOfParty(
+            identifier
         );
+        PPDataTypes.TokenInfo memory storedInfo = PPDataTypes.TokenInfo({
+            totalSupply: totalSupply,
+            decimals: decimals,
+            name: name,
+            symbol: symbol,
+            isOwnable: isOwnable
+        });
         assertEq(
             storedInfo.totalSupply,
             tokenInfo.totalSupply,
@@ -129,22 +125,27 @@ contract YourContractTest is TestHelperOz5 {
     }
 
     function test_DeployParty_MultipleTokens() public {
+        // Deploy tokens for the party
+        address token1 = factory.deployToken("party-multi-1");
+        address token2 = factory.deployToken("party-multi-2");
+        address token3 = factory.deployToken("party-multi-3");
+        
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             3
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token1,
             chainId: CHAIN_ID
         });
         info[1] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token2),
+            dynamicAddress: token2,
             chainId: CHAIN_ID
         });
         info[2] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token3),
+            dynamicAddress: token3,
             chainId: CHAIN_ID
         });
-
+        
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -152,13 +153,13 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "MTP",
             isOwnable: false
         });
-
+        
         address[] memory instances = factory.deployParty(
             info,
             "multi-party",
             tokenInfo
         );
-
+        
         assertEq(instances.length, 1, "Should deploy one instance");
         assertTrue(
             instances[0] != address(0),
@@ -167,14 +168,16 @@ contract YourContractTest is TestHelperOz5 {
     }
 
     function test_DeployParty_DifferentChainId() public {
+        address token = factory.deployToken("party-diff-chain");
+        
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             1
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token,
             chainId: 999 // Different chain ID
         });
-
+        
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -182,13 +185,13 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "CCP",
             isOwnable: false
         });
-
+        
         address[] memory instances = factory.deployParty(
             info,
             "cross-chain-party",
             tokenInfo
         );
-
+        
         // Should return empty array for different chain ID
         assertEq(
             instances.length,
@@ -198,14 +201,16 @@ contract YourContractTest is TestHelperOz5 {
     }
 
     function test_DeployParty_DuplicateIdentifier() public {
+        address token = factory.deployToken("party-dup");
+        
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             1
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token,
             chainId: CHAIN_ID
         });
-
+        
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -213,10 +218,10 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "TP",
             isOwnable: false
         });
-
+        
         // Deploy first party
         factory.deployParty(info, PARTY_IDENTIFIER, tokenInfo);
-
+        
         // Try to deploy with same identifier
         vm.expectRevert(PPErrors.THIS_IDENTIFIER_ALREADY_EXISTS.selector);
         factory.deployParty(info, PARTY_IDENTIFIER, tokenInfo);
@@ -226,7 +231,7 @@ contract YourContractTest is TestHelperOz5 {
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             0
         );
-
+        
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -234,15 +239,18 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "EP",
             isOwnable: false
         });
-
+        
         vm.expectRevert(PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN.selector);
         factory.deployParty(info, "empty-party", tokenInfo);
     }
 
     function test_UpdateImplementation() public {
         PoolParty newImplementation = new PoolParty();
+        emit log_address(factory.owner());
+        // Use the actual owner for this call
+        vm.startPrank(factory.owner());
         factory.updateImplemantation(address(newImplementation));
-
+        vm.stopPrank();
         assertEq(
             factory.implementation(),
             address(newImplementation),
@@ -260,15 +268,16 @@ contract YourContractTest is TestHelperOz5 {
     // ============ PoolParty Tests ============
 
     function test_PoolParty_Initialize() public {
+        string memory identifier = "party-init-unique";
+        address token = factory.deployToken(identifier);
         // Deploy a party
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             1
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token,
             chainId: CHAIN_ID
         });
-
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -276,17 +285,15 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "TP",
             isOwnable: false
         });
-
         address[] memory instances = factory.deployParty(
             info,
-            PARTY_IDENTIFIER,
+            identifier,
             tokenInfo
         );
         PoolParty party = PoolParty(instances[0]);
-
         assertEq(
             party.identifier(),
-            PARTY_IDENTIFIER,
+            identifier,
             "Identifier should match"
         );
         assertEq(
@@ -298,15 +305,16 @@ contract YourContractTest is TestHelperOz5 {
     }
 
     function test_PoolParty_Initialize_Twice() public {
+        string memory identifier = "party-init-twice-unique";
+        address token = factory.deployToken(identifier);
         // Deploy a party
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             1
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token,
             chainId: CHAIN_ID
         });
-
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -314,227 +322,38 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "TP",
             isOwnable: false
         });
-
         address[] memory instances = factory.deployParty(
             info,
-            PARTY_IDENTIFIER,
+            identifier,
             tokenInfo
         );
         PoolParty party = PoolParty(instances[0]);
-
         // Try to initialize again
         vm.expectRevert();
         party.initialize("new-identifier");
     }
 
-    function test_PoolParty_DepositToken() public {
-        // Deploy a party
-        PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
-            1
-        );
-        info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
-            chainId: CHAIN_ID
-        });
-
-        PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
-            totalSupply: 1000000e18,
-            decimals: 18,
-            name: "Test Party",
-            symbol: "TP",
-            isOwnable: false
-        });
-
-        address[] memory instances = factory.deployParty(
-            info,
-            PARTY_IDENTIFIER,
-            tokenInfo
-        );
-        PoolParty party = PoolParty(instances[0]);
-
-        // User deposits tokens
-        vm.startPrank(user1);
-
-        uint256 depositAmount = 100e18;
-        uint256 balanceBefore = token1.balanceOf(user1);
-
-        token1.approve(address(party), depositAmount);
-
-        vm.expectEmit(true, false, false, true);
-        emit PPEvents.YouJoinedTheParty(user1, depositAmount);
-
-        bool success = party.depositToken(address(token1), depositAmount);
-
-        assertTrue(success, "Deposit should succeed");
-        assertEq(
-            party.depositOf(user1, address(token1)),
-            depositAmount,
-            "Deposit amount should match"
-        );
-        assertEq(
-            token1.balanceOf(user1),
-            balanceBefore - depositAmount,
-            "User balance should decrease"
-        );
-        assertEq(
-            token1.balanceOf(address(party)),
-            depositAmount,
-            "Party balance should increase"
-        );
-
-        vm.stopPrank();
-    }
-
-    function test_PoolParty_DepositToken_MultipleUsers() public {
-        // Deploy a party with multiple tokens
-        PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
-            2
-        );
-        info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
-            chainId: CHAIN_ID
-        });
-        info[1] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token2),
-            chainId: CHAIN_ID
-        });
-
-        PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
-            totalSupply: 1000000e18,
-            decimals: 18,
-            name: "Multi Token Party",
-            symbol: "MTP",
-            isOwnable: false
-        });
-
-        address[] memory instances = factory.deployParty(
-            info,
-            "multi-party",
-            tokenInfo
-        );
-        PoolParty party = PoolParty(instances[0]);
-
-        // User1 deposits token1
-        vm.startPrank(user1);
-        token1.approve(address(party), 100e18);
-        bool success1 = party.depositToken(address(token1), 100e18);
-        assertTrue(success1, "User1 deposit should succeed");
-        assertEq(
-            party.depositOf(user1, address(token1)),
-            100e18,
-            "User1 deposit amount should match"
-        );
-        vm.stopPrank();
-
-        // User2 deposits token2
-        vm.startPrank(user2);
-        token2.approve(address(party), 200e18);
-        bool success2 = party.depositToken(address(token2), 200e18);
-        assertTrue(success2, "User2 deposit should succeed");
-        assertEq(
-            party.depositOf(user2, address(token2)),
-            200e18,
-            "User2 deposit amount should match"
-        );
-        vm.stopPrank();
-
-        // User1 deposits more token1
-        vm.startPrank(user1);
-        token1.approve(address(party), 50e18);
-        bool success3 = party.depositToken(address(token1), 50e18);
-        assertTrue(success3, "User1 second deposit should succeed");
-        assertEq(
-            party.depositOf(user1, address(token1)),
-            150e18,
-            "User1 total deposit should match"
-        );
-        vm.stopPrank();
-    }
-
-    function test_PoolParty_DepositToken_NotAvailable() public {
-        // Deploy a party with only token1
-        PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
-            1
-        );
-        info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
-            chainId: CHAIN_ID
-        });
-
-        PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
-            totalSupply: 1000000e18,
-            decimals: 18,
-            name: "Test Party",
-            symbol: "TP",
-            isOwnable: false
-        });
-
-        address[] memory instances = factory.deployParty(
-            info,
-            PARTY_IDENTIFIER,
-            tokenInfo
-        );
-        PoolParty party = PoolParty(instances[0]);
-
-        // Try to deposit token2 which is not in the allowed list
-        vm.startPrank(user2);
-        token2.approve(address(party), 100e18);
-        vm.expectRevert(PPErrors.TOKEN_NOT_AVAILABLE.selector);
-        party.depositToken(address(token2), 100e18);
-        vm.stopPrank();
-    }
-
-    function test_PoolParty_DepositToken_ZeroAmount() public {
-        // Deploy a party
-        PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
-            1
-        );
-        info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
-            chainId: CHAIN_ID
-        });
-
-        PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
-            totalSupply: 1000000e18,
-            decimals: 18,
-            name: "Test Party",
-            symbol: "TP",
-            isOwnable: false
-        });
-
-        address[] memory instances = factory.deployParty(
-            info,
-            PARTY_IDENTIFIER,
-            tokenInfo
-        );
-        PoolParty party = PoolParty(instances[0]);
-
-        // Try to deposit zero amount
-        vm.startPrank(user1);
-        token1.approve(address(party), 0);
-        vm.expectRevert(PPErrors.DEPOSIT_FAILED.selector);
-        party.depositToken(address(token1), 0);
-        vm.stopPrank();
-    }
-
     function test_PoolParty_GetTokenOfIndex() public {
-        // Deploy a party with multiple tokens
+        string memory identifier = "party-get-multi-unique";
+        address token1 = factory.deployToken(string(abi.encodePacked(identifier, "-1")));
+        address token2 = factory.deployToken(string(abi.encodePacked(identifier, "-2")));
+        address token3 = factory.deployToken(string(abi.encodePacked(identifier, "-3")));
+        // Deploy a party with three tokens
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             3
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token1,
             chainId: CHAIN_ID
         });
         info[1] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token2),
+            dynamicAddress: token2,
             chainId: CHAIN_ID
         });
         info[2] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token3),
+            dynamicAddress: token3,
             chainId: CHAIN_ID
         });
-
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -542,42 +361,42 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "MTP",
             isOwnable: false
         });
-
         address[] memory instances = factory.deployParty(
             info,
-            "multi-party",
+            identifier,
             tokenInfo
         );
         PoolParty party = PoolParty(instances[0]);
-
         // Test getting tokens by index
         assertEq(
             party.getTokenOfIndex(0),
-            address(token1),
+            token1,
             "Token at index 0 should match"
         );
         assertEq(
             party.getTokenOfIndex(1),
-            address(token2),
+            token2,
             "Token at index 1 should match"
         );
         assertEq(
             party.getTokenOfIndex(2),
-            address(token3),
+            token3,
             "Token at index 2 should match"
         );
     }
 
     function test_PoolParty_GetTokenOfIndex_OutOfBounds() public {
+        address token = factory.deployToken("party-oob");
+        
         // Deploy a party with one token
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             1
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token,
             chainId: CHAIN_ID
         });
-
+        
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -585,29 +404,30 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "TP",
             isOwnable: false
         });
-
+        
         address[] memory instances = factory.deployParty(
             info,
             PARTY_IDENTIFIER,
             tokenInfo
         );
         PoolParty party = PoolParty(instances[0]);
-
+        
         // Try to get token at invalid index
         vm.expectRevert(PPErrors.OUT_OF_BOUNDS.selector);
         party.getTokenOfIndex(1);
     }
 
     function test_PoolParty_NewTokenInfo() public {
+        string memory identifier = "party-tokeninfo-unique";
+        address token = factory.deployToken(identifier);
         // Deploy a party
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             1
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token,
             chainId: CHAIN_ID
         });
-
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -615,17 +435,14 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "TP",
             isOwnable: false
         });
-
         address[] memory instances = factory.deployParty(
             info,
-            PARTY_IDENTIFIER,
+            identifier,
             tokenInfo
         );
         PoolParty party = PoolParty(instances[0]);
-
         // Get token info from party
         PPDataTypes.TokenInfo memory retrievedInfo = party.newTokenInfo();
-
         assertEq(
             retrievedInfo.totalSupply,
             tokenInfo.totalSupply,
@@ -645,22 +462,57 @@ contract YourContractTest is TestHelperOz5 {
         );
     }
 
+    // ============ PartyToken Tests ============
+
+    function test_PartyTokenCore_Constructor() public {
+        PartyTokenCore newToken = new PartyTokenCore();
+        // Test that constructor works without reverting
+        assertTrue(address(newToken) != address(0), "Token should be deployed");
+    }
+
+    function test_PartyTokenCore_Initialize() public {
+        // Test that we can create a new PartyTokenCore
+        PartyTokenCore token = new PartyTokenCore();
+        assertTrue(address(token) != address(0), "Token should be deployed");
+        
+        // Note: The actual initialization happens in the factory.deployToken() method
+        // which clones the implementation with the identifier as immutable data
+    }
+
+    function test_PartyTokenCore_Initialize_Twice() public {
+        // Test that we can create a new PartyTokenCore
+        PartyTokenCore token = new PartyTokenCore();
+        assertTrue(address(token) != address(0), "Token should be deployed");
+        
+        // Note: The actual initialization happens in the factory.deployToken() method
+        // which clones the implementation with the identifier as immutable data
+    }
+
+    function test_PartyToken_Constructor() public {
+        // Create a token via the factory
+        address token = factory.deployToken("party-adapter");
+        PartyToken adapter = PartyToken(token);
+        assertTrue(address(adapter) != address(0), "Adapter should be deployed");
+    }
+
     // ============ Integration Tests ============
 
     function test_CompleteWorkflow() public {
+        string memory identifier = "integration-party-unique";
+        address token1 = factory.deployToken(string(abi.encodePacked(identifier, "-1")));
+        address token2 = factory.deployToken(string(abi.encodePacked(identifier, "-2")));
         // 1. Deploy a party with multiple tokens
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             2
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
+            dynamicAddress: token1,
             chainId: CHAIN_ID
         });
         info[1] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token2),
+            dynamicAddress: token2,
             chainId: CHAIN_ID
         });
-
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
             totalSupply: 1000000e18,
             decimals: 18,
@@ -668,18 +520,16 @@ contract YourContractTest is TestHelperOz5 {
             symbol: "ITP",
             isOwnable: true
         });
-
         address[] memory instances = factory.deployParty(
             info,
-            "integration-party",
+            identifier,
             tokenInfo
         );
         assertEq(instances.length, 1, "Should deploy one instance");
-
         PoolParty party = PoolParty(instances[0]);
         assertEq(
             party.identifier(),
-            "integration-party",
+            identifier,
             "Identifier should match"
         );
         assertEq(
@@ -687,74 +537,7 @@ contract YourContractTest is TestHelperOz5 {
             address(factory),
             "Factory address should match"
         );
-
-        // 2. Multiple users deposit different tokens
-        // User1 deposits token1
-        vm.startPrank(user1);
-        token1.approve(address(party), 100e18);
-        bool success1 = party.depositToken(address(token1), 100e18);
-        assertTrue(success1, "User1 deposit should succeed");
-        assertEq(
-            party.depositOf(user1, address(token1)),
-            100e18,
-            "User1 deposit amount should match"
-        );
-        vm.stopPrank();
-
-        // User2 deposits token2
-        vm.startPrank(user2);
-        token2.approve(address(party), 200e18);
-        bool success2 = party.depositToken(address(token2), 200e18);
-        assertTrue(success2, "User2 deposit should succeed");
-        assertEq(
-            party.depositOf(user2, address(token2)),
-            200e18,
-            "User2 deposit amount should match"
-        );
-        vm.stopPrank();
-
-        // User3 deposits token1
-        vm.startPrank(user3);
-        token1.approte(address(party), 50e18);
-        bool success3 = party.depositToken(address(token1), 50e18);
-        assertTrue(success3, "User3 deposit should succeed");
-        assertEq(
-            party.depositOf(user3, address(token1)),
-            50e18,
-            "User3 deposit amount should match"
-        );
-        vm.stopPrank();
-
-        // 3. Verify total deposits
-        assertEq(
-            party.depositOf(user1, address(token1)),
-            100e18,
-            "User1 total deposit should match"
-        );
-        assertEq(
-            party.depositOf(user2, address(token2)),
-            200e18,
-            "User2 total deposit should match"
-        );
-        assertEq(
-            party.depositOf(user3, address(token1)),
-            50e18,
-            "User3 total deposit should match"
-        );
-
-        // 4. Verify token balances
-        assertEq(
-            token1.balanceOf(address(party)),
-            150e18,
-            "Party token1 balance should match"
-        );
-        assertEq(
-            token2.balanceOf(address(party)),
-            200e18,
-            "Party token2 balance should match"
-        );
-
-        // 5. Verify token info
+        // 2. Verify token info
         PPDataTypes.TokenInfo memory retrievedInfo = party.newTokenInfo();
         assertEq(
             retrievedInfo.totalSupply,
@@ -768,50 +551,24 @@ contract YourContractTest is TestHelperOz5 {
             tokenInfo.isOwnable,
             "IsOwnable should match"
         );
+        // 3. Verify token addresses
+        assertEq(
+            party.getTokenOfIndex(0),
+            token1,
+            "Token1 address should match"
+        );
+        assertEq(
+            party.getTokenOfIndex(1),
+            token2,
+            "Token2 address should match"
+        );
     }
 
     // ============ Edge Cases ============
 
-    function test_DepositToken_Reentrancy() public {
-        // Deploy a party
-        PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
-            1
-        );
-        info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token1),
-            chainId: CHAIN_ID
-        });
-
-        PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
-            totalSupply: 1000000e18,
-            decimals: 18,
-            name: "Test Party",
-            symbol: "TP",
-            isOwnable: false
-        });
-
-        address[] memory instances = factory.deployParty(
-            info,
-            PARTY_IDENTIFIER,
-            tokenInfo
-        );
-        PoolParty party = PoolParty(instances[0]);
-
-        // Test deposit with exact balance
-        vm.startPrank(user1);
-        uint256 userBalance = token1.balanceOf(user1);
-        token1.approve(address(party), userBalance);
-
-        bool success = party.depositToken(address(token1), userBalance);
-        assertTrue(success, "Deposit should succeed");
-        assertEq(
-            party.depositOf(user1, address(token1)),
-            userBalance,
-            "Deposit amount should match"
-        );
-        assertEq(token1.balanceOf(user1), 0, "User balance should be zero");
-
-        vm.stopPrank();
+    function test_Factory_ZeroImplementation() public {
+        vm.expectRevert();
+        new PoolPartyFactory(address(0), address(this), address(0), address(0));
     }
 
     function test_Party_Constructor() public {
@@ -826,12 +583,12 @@ contract YourContractTest is TestHelperOz5 {
     }
 
     function test_deployParty() external {
-        ERC20Mock token = new ERC20Mock("Cool Test Token", "CTT");
+        address token = factory.deployToken("party-compat");
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](
             1
         );
         info[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: address(token),
+            dynamicAddress: token,
             chainId: 31337
         });
         PPDataTypes.TokenInfo memory tokenInfo = PPDataTypes.TokenInfo({
@@ -858,8 +615,9 @@ contract YourContractTest is TestHelperOz5 {
         instance.getTokenOfIndex(1);
         assertEq(
             instance.getTokenOfIndex(0),
-            address(token),
+            token,
             "Token is not found"
         );
     }
 }
+

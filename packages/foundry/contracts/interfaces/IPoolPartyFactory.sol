@@ -15,7 +15,7 @@ import {PPDataTypes} from "../libraries/PPDataTypes.sol";
 interface IPoolPartyFactory {
     function infoOfParty(
         string calldata identifier
-    ) external view returns (PPDataTypes.TokenInfo calldata tokenInfo);
+    ) external view returns (uint256 totalSupply, uint8 decimals, string memory name, string memory symbol, bool isOwnable);
 
     function sidePartyAt(
         uint96 chainId

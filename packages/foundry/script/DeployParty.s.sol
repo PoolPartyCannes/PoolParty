@@ -46,7 +46,7 @@ contract DeployParty is ScaffoldETHDeploy {
         _tokenImplementation = address(new PartyTokenCore());
 
         // Token deployed
-        _tokenImplementation = address();
+        // _tokenImplementation is already set above
 
         // Then deploy the factory with the implementation address
         _factory = _deployOApp(

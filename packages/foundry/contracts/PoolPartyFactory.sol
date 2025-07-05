@@ -54,6 +54,7 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         string calldata _identifier,
         PPDataTypes.TokenInfo calldata _tokenInfo
     ) external returns (address[] memory _instances) {
+        if (_info.length == 0) revert PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN();
         if (
             infoOfParty[_identifier].totalSupply != 0 ||
             infoOfParty[_identifier].decimals != 0
@@ -61,9 +62,11 @@ contract PoolPartyFactory is IOAppComposer, OApp {
 
         infoOfParty[_identifier] = _tokenInfo;
 
-        // Initialize array with proper size
-        address[] memory tokenArr = new address[](1);
-        tokenArr[0] = _info[0].dynamicAddress;
+        // Initialize array with proper size for all tokens
+        address[] memory tokenArr = new address[](_info.length);
+        for (uint256 i = 0; i < _info.length; i++) {
+            tokenArr[i] = _info[i].dynamicAddress;
+        }
 
         if (uint256(_info[0].chainId) == block.chainid) {
             _instances = new address[](1);
@@ -95,6 +98,10 @@ contract PoolPartyFactory is IOAppComposer, OApp {
             }),
             _tokenInfo
         );
+    }
+
+    function deployToken(string calldata _identifier) external returns (address _instance) {
+        _instance = tokenImplementation.clone(abi.encodePacked(_identifier));
     }
 
     function version() external pure returns (uint8 _version) {

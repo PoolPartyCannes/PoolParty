@@ -91,6 +91,13 @@ contract PoolParty is Initializable, Clone {
         view
         returns (PPDataTypes.TokenInfo memory _info)
     {
-        _info = IPoolPartyFactory(factory()).infoOfParty(identifier);
+        (uint256 totalSupply, uint8 decimals, string memory name, string memory symbol, bool isOwnable) = IPoolPartyFactory(factory()).infoOfParty(identifier);
+        _info = PPDataTypes.TokenInfo({
+            totalSupply: totalSupply,
+            decimals: decimals,
+            name: name,
+            symbol: symbol,
+            isOwnable: isOwnable
+        });
     }
 }

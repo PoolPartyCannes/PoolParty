@@ -24,7 +24,7 @@ contract PartyTokenCore is ERC20, Initializable, Clone {
 
     function initialize(
         string memory _name,
-        string memory _symbol,
+        string memory _symbol
     ) external initializer {
         pName = _name;
         pSymbol = _symbol;
