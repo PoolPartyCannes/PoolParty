@@ -30,4 +30,12 @@ contract YourContractTest is TestHelperOz5 {
     function test_messageOnDeployment() external view {
         assertEq(factory.version(), uint8(1), "Test version is not found");
     }
+
+    function try_deployParty() external {
+        factory.deployParty(
+            new PPDataTypes.DynamicInfo[](1),
+            "test",
+            new PPDataTypes.TokenInfo(1000000000000000000, 18)
+        );
+    }
 }
