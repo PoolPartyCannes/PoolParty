@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 /* sw0nt contracts */
-import {Clone} from "../lib/clones-with-immutable-args/src/Clone.sol";
+import {Clone} from "@sw0nt/contracts/Clone.sol";
 
 /* solady contracts */
 import {Initializable} from "@solady/contracts/utils/Initializable.sol";
@@ -22,6 +22,10 @@ contract PoolParty is Initializable, Clone {
 
     constructor() {
         _disableInitializers();
+    }
+
+    function version() external pure returns (uint8 _version) {
+        _version = 1;
     }
 
     function initialize(string calldata _identifier) external initializer {

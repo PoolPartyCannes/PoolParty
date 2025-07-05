@@ -2,7 +2,7 @@
 pragma solidity 0.8.30;
 
 /* sw0nt libraries */
-import {ClonesWithImmutableArgs} from "../lib/clones-with-immutable-args/src/ClonesWithImmutableArgs.sol";
+import {ClonesWithImmutableArgs} from "@sw0nt/contracts/ClonesWithImmutableArgs.sol";
 
 /* PoolParty libraries */
 import {PPDataTypes} from "./libraries/PPDataTypes.sol";
@@ -73,11 +73,13 @@ contract PoolPartyFactory is IOAppComposer, OApp {
             revert PPErrors.COULD_NOT_DEPLOY_PROXY();
 
         // Create deployedParties array with proper size
-        PPDataTypes.DynamicInfo[] memory deployedParties = new PPDataTypes.DynamicInfo[](1);
-        deployedParties[0] = PPDataTypes.DynamicInfo({
-            dynamicAddress: _instances[0],
-            chainId: _info[0].chainId
-        });
+        PPDataTypes.DynamicInfo[] memory deployedParties = new PPDataTypes.DynamicInfo[](_instances.length);
+        if (_instances.length > 0) {
+            deployedParties[0] = PPDataTypes.DynamicInfo({
+                dynamicAddress: _instances[0],
+                chainId: _info[0].chainId
+            });
+        }
         
         emit PPEvents.LetsGetThisPartyStarted(
             msg.sender,
@@ -89,8 +91,8 @@ contract PoolPartyFactory is IOAppComposer, OApp {
         );
     }
 
-    function t() external pure returns (uint8 _t) {
-        _t = 69;
+    function version() external pure returns (uint8 _version) {
+        _version = 1;
     }
 
     function updateImplemantation(
