@@ -3,16 +3,23 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-// import "../contracts/YourContract.sol";
+/* Our Own Deploy Script */
+import {DeployScript} from "../script/Deploy.s.sol";
+
+/* Our Contracts */
+import {PoolPartyFactory} from "../contracts/PoolPartyFactory.sol";
+import {PoolParty} from "../contracts/PoolParty.sol";
 
 contract YourContractTest is Test {
-    //YourContract public yourContract;
+    PoolPartyFactory factory;
+    PoolParty implementation;
 
     function setUp() public {
-        //yourContract = new YourContract(vm.addr(1));
+        DeployScript partyDeployer = new DeployScript();
+        (implementation, factory) = partyDeployer.run();
     }
 
-    //    function testMessageOnDeployment() public view {
+    //    function test_messageOnDeployment() external {
     //        urequire(keccak256(bytes(yourContract.greeting())) == keccak256("Building Unstoppable Apps!!!"));
     //    }
 }

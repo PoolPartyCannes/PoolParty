@@ -3,7 +3,8 @@ pragma solidity ^0.8.19;
 
 import "./DeployHelpers.s.sol";
 
-//import "../contracts/YourContract.sol";
+import {PoolPartyFactory} from "../contracts/PoolPartyFactory.sol";
+import {PoolParty} from "../contracts/PoolParty.sol";
 
 /**
  * @notice Deploy script for YourContract contract
@@ -15,7 +16,7 @@ import "./DeployHelpers.s.sol";
  * yarn deploy --file DeployYourContract.s.sol  # local anvil chain
  * yarn deploy --file DeployYourContract.s.sol --network optimism # live network (requires keystore)
  */
-contract DeployYourContract is ScaffoldETHDeploy {
+contract DeployParty is ScaffoldETHDeploy {
     /**
      * @dev Deployer setup based on `ETH_KEYSTORE_ACCOUNT` in `.env`:
      *      - "scaffold-eth-default": Uses Anvil's account #9 (0xa0Ee7A142d267C1f36714E4a8F75612F20a79720), no password prompt
@@ -25,7 +26,14 @@ contract DeployYourContract is ScaffoldETHDeploy {
      *      - Setup correct `deployer` account and fund it
      *      - Export contract addresses & ABIs to `nextjs` packages
      */
-    function run() external ScaffoldEthDeployerRunner {
-        //new YourContract(deployer);
+    function run()
+        external
+        ScaffoldEthDeployerRunner
+        returns (address _implementation, address _factory)
+    {
+        _implementation = address(new PoolParty());
+        _factory = address(
+            new PoolPartyFactory(address(0), deployer, _implementation)
+        );
     }
 }
