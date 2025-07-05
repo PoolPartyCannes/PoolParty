@@ -7,6 +7,9 @@ import {Clone} from "@sw0nt/contracts/Clone.sol";
 /* solady contracts */
 import {Initializable} from "@solady/contracts/utils/Initializable.sol";
 
+/* OpenZeppelin libraries */
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
+
 /**
  * @title PoolParty
  * @author https://x.com/0xjsieth
@@ -14,8 +17,14 @@ import {Initializable} from "@solady/contracts/utils/Initializable.sol";
  *
  */
 contract PoolParty is Initializable, Clone {
-    function initialize(
-        address[] calldata _tokens,
-        string calldata _identifier
-    ) external {}
+    // Identifier fetched from walrus
+    string public identifier;
+
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(string calldata _identifier) external initializer {
+        identifier = _identifier;
+    }
 }

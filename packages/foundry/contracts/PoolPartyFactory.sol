@@ -5,8 +5,12 @@ pragma solidity 0.8.30;
 import {ClonesWithImmutableArgs} from "@sw0nt/contracts/ClonesWithImmutableArgs.sol";
 
 /* PoolParty libraries */
-import {PPDataTypes} from "../contracts/libraries/PPDataTypes.sol";
-import {PPErrors} from "../contracts/libraries/PPErrors.sol";
+import {PPDataTypes} from "./libraries/PPDataTypes.sol";
+import {PPErrors} from "./libraries/PPErrors.sol";
+import {PPEvents} from "./libraries/PPEvents.sol";
+
+/* PoolParty contracts */
+import {PoolParty} from "../contracts/PoolParty.sol";
 
 /* LayerZero Interfaces */
 import {IOAppComposer} from "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/IOAppComposer.sol";
@@ -43,25 +47,39 @@ contract PoolPartyFactory is IOAppComposer, OApp {
     }
 
     function deployParty(
-        PPDataTypes.DynamicInfo calldata _info,
+        PPDataTypes.DynamicInfo[] calldata _info,
         string calldata _identifier,
         PPDataTypes.TokenInfo calldata _tokenInfo
-    ) external returns (string memory _testMessage) {
-        //if (_info.allowedTokens.length)
-        //revert PPErrors.WRONGLY_FORMATTED_PARTY_INFO();
+    ) external returns (address[] memory _instances) {
+        if (
+            infoOfParty[_identifier].totalSupply != 0 ||
+            infoOfParty[_identifier].decimals != 0
+        ) revert PPErrors.THIS_IDENTIFIER_ALREADY_EXISTS();
 
-        // if (
-        //    infoOfParty[_identifier].totalSupply != 0 ||
-        //    infoOfParty[_identifier].decimals != 0
-        // ) revert PPErrors.THIS_IDENTIFIER_ALREADY_EXISTS();
+        infoOfParty[_identifier] = _tokenInfo;
 
-        //for (uint256 i; i < _info.allowedTokens.length; ) {
-        // Here we should deploy the proxies
-        //    unchecked {
-        //        i++;
-        //    }
-        //}
-        _testMessage = "Hello";
+        address[] memory tokenArr;
+        tokenArr[0] = (_info[0].dynamicAddress);
+        if (uint256(_info[0].chainId) == block.chainid) {
+            _instances[0] = _deployPartyProxy(tokenArr, _identifier);
+        }
+
+        if (_instances[0] == address(0))
+            revert PPErrors.COULD_NOT_DEPLOY_PROXY();
+
+        PPDataTypes.DynamicInfo[] memory deployedParties;
+        deployedParties[0] = PPDataTypes.DynamicInfo({
+            dynamicAddress: _instances[0],
+            chainId: _info[0].chainId
+        });
+        emit PPEvents.LetsGetThisPartyStarted(
+            msg.sender,
+            PPDataTypes.PartyInfo({
+                allowedTokens: _info,
+                deployedParties: deployedParties
+            }),
+            _tokenInfo
+        );
     }
 
     function updateImplemantation(address _newImplementation) external {
@@ -91,7 +109,36 @@ contract PoolPartyFactory is IOAppComposer, OApp {
     ) internal override {}
 
     function _deployPartyProxy(
-        address[] calldata tokens,
-        string calldata identifier
-    ) internal {}
+        address[] memory _tokens,
+        string calldata _identifier
+    ) internal returns (address _instance) {
+        // Pull token length into memory
+        uint256 amountOfTokens = _tokens.length;
+        // Make sure we at least have one token
+        if (amountOfTokens == 0) revert PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN();
+        // Fill the first piece of data with the length of the token array for easier handling of token addresses inside of the pool party
+        bytes memory data = abi.encodePacked(uint8(amountOfTokens));
+        // In order to save gas we're checking if there is 1 or more tokens here...
+        if (amountOfTokens > 1) {
+            // If there is more...
+            for (uint256 i; i < amountOfTokens; ) {
+                // We index through them and concatinate them into the bytes data
+                data = bytes.concat(data, abi.encodePacked(_tokens[i]));
+                // Continue the loop, the sexy way
+                unchecked {
+                    i++;
+                }
+            }
+            // Else if there is just on token...
+        } else {
+            // We're only slamming that in, no need to check the length of the tokens
+            data = bytes.concat(data, abi.encodePacked(_tokens[0]));
+        }
+
+        // Create the minimum proxy
+        _instance = implementation.clone(data);
+
+        // initialize it with the identifier
+        PoolParty(_instance).initialize(_identifier);
+    }
 }

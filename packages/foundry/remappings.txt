@@ -1,4 +1,5 @@
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts
+@openzeppelin/contracts-upgradeable=lib/openzeppelin-contracts-upgradeable/contracts
 @solady/contracts/=lib/solady/src
 @sw0nt/contracts/=lib/clones-with-immutable-args/src
 @mudgen/contracts/=lib/diamond-2/contracts
