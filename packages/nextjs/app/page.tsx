@@ -1,8 +1,15 @@
 "use client";
 
 // import Link from "next/link";
+import Link from "next/link";
 import type { NextPage } from "next";
-import { ClockIcon, GiftIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
+import {
+  AdjustmentsHorizontalIcon,
+  ClockIcon,
+  GiftIcon,
+  RocketLaunchIcon,
+  ShoppingCartIcon,
+} from "@heroicons/react/24/outline";
 
 const Home: NextPage = () => {
   return (
@@ -18,9 +25,9 @@ const Home: NextPage = () => {
 
         <div className="flex flex-col justify-center items-center">
           <div>
-            <p className="text-2xl">How to have a pool party</p>
+            <p className="text-2xl">How it works</p>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col space-y-10">
             <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
               {[
                 {
@@ -34,7 +41,7 @@ const Home: NextPage = () => {
                 },
               ].map((item, index) => (
                 <div key={index} className="flex flex-col px-10 py-10 text-center items-center rounded-3xl w-96 h-30">
-                  <p className="mt-6">{item.number}</p> {/* Increased margin-top */}
+                  <p className="mt-6 text-5xl">{item.number}</p> {/* Increased margin-top */}
                 </div>
               ))}
             </div>
@@ -50,35 +57,44 @@ const Home: NextPage = () => {
                 },
                 {
                   icon: <GiftIcon className="h-8 w-8 fill-secondary" />,
-                  text: "Enjoy your new token and liquidity",
+                  text: "Enjoy your new token with extra liquidity",
                 },
               ].map((item, index) => (
                 <div
                   key={index}
-                  className="flex flex-col bg-base-100 px-10 py-10 text-center items-center rounded-3xl w-96 h-60"
+                  className="flex flex-col bg-base-100 px-10 py-10 text-center items-center rounded-3xl w-96 h-60 border border-gray-300 transition-transform duration-300 hover:-translate-y-2"
                 >
                   {item.icon}
-                  <p className="mt-6">{item.text}</p> {/* Increased margin-top */}
+                  <p className="mt-6">{item.text}</p>
                 </div>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
-          <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-            <BugAntIcon className="h-8 w-8 fill-secondary" />
-            <p>
-              <Link href="/createmigration" passHref className="link">
-                Create a new migration
-              </Link>{" "}
-            </p>
+          <div className="flex flex-col space-y-10 mt-20">
+            <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
+              {[
+                {
+                  icon: <AdjustmentsHorizontalIcon className="h-8 w-8 fill-secondary" />,
+                  linkto: "/createmigration",
+                  text: "Create Migration",
+                },
+                {
+                  icon: <ShoppingCartIcon className="h-8 w-8 fill-secondary" />,
+                  linkto: "/migrate",
+                  text: "Migrate Coins",
+                },
+              ].map((item, index) => (
+                <Link href={item.linkto} passHref className="link" key={index}>
+                  <div className="flex flex-col bg-base-300 px-10 py-10 text-center items-center rounded-3xl w-40 h-60 shine-effect transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg">
+                    {item.icon}
+                    <p className="mt-6">{item.text}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-            <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-            <p>Migrate tokens</p>
-          </div>
-        </div> */}
+        </div>
       </div>
     </>
   );
