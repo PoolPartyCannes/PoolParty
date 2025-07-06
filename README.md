@@ -21,9 +21,7 @@
 
 ## Party Finality Date 
 
-
-
-If you find a sloth, there is the possibility to post a roast for this slow payee on x dot com the everything app in a single click
+When the party's finality date is reached, all tokens will get sold. After that we will use a formula to decide how much each person is getting. All tokens are sold for eth, either in one clip, or TWAP:ed during a certain duration chosen by the company upon party creation. First, all ETH is grouped together onto the factory contract of the chain where the token will get deposited. In each party contract, the amount of tokens deposited, and the total eth derived from each side.
 
 ## Diagrams
 ### Full flow, from company party creation to token deployment

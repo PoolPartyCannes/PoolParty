@@ -5,7 +5,11 @@ const { heroui } = require("@heroui/theme");
 module.exports = {
   content: ["./node_modules/@heroui/theme/dist/components/(button|form|input|ripple|spinner).js"],
   theme: {
-    extend: {},
+    extend: {
+      zIndex: {
+        '12': '12',
+      },
+    },
   },
   darkMode: "class",
   plugins: [heroui()],

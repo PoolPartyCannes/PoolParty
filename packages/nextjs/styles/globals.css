@@ -104,6 +104,11 @@
   background: var(--color-base-200);
 }
 
+/* Override background for walrus background */
+.walrus-background {
+  background: transparent !important;
+}
+
 .btn {
   @apply shadow-md;
 }
