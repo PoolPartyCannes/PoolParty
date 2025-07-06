@@ -6,17 +6,16 @@ import "./DeployHelpers.s.sol";
 import {PoolPartyFactory} from "../contracts/PoolPartyFactory.sol";
 import {PoolParty} from "../contracts/PoolParty.sol";
 import {PartyToken} from "../contracts/PartyToken.sol";
-import {TestHelperOz5} from "@layerzerolabs/test-devtools-evm-foundry/contracts/TestHelperOz5.sol";
 
 /**
- * @notice Deploy script for YourContract contract
+ * @notice Deploy script for PoolParty contracts
  * @dev Inherits ScaffoldETHDeploy which:
  *      - Includes forge-std/Script.sol for deployment
  *      - Includes ScaffoldEthDeployerRunner modifier
  *      - Provides `deployer` variable
  * Example:
- * yarn deploy --file DeployYourContract.s.sol  # local anvil chain
- * yarn deploy --file DeployYourContract.s.sol --network optimism # live network (requires keystore)
+ * yarn deploy --file DeployParty.s.sol  # local anvil chain
+ * yarn deploy --file DeployParty.s.sol --network optimism # live network (requires keystore)
  */
 contract DeployParty is ScaffoldETHDeploy {
     /**
@@ -28,9 +27,7 @@ contract DeployParty is ScaffoldETHDeploy {
      *      - Setup correct `deployer` account and fund it
      *      - Export contract addresses & ABIs to `nextjs` packages
      */
-    function run(
-        address _endpoint
-    )
+    function run()
         external
         ScaffoldEthDeployerRunner
         returns (
@@ -45,34 +42,10 @@ contract DeployParty is ScaffoldETHDeploy {
         // Deploy the token implementation
         _tokenImplementation = address(new PartyToken());
 
-        // Token deployed
-        // _tokenImplementation is already set above
-
-        // Then deploy the factory with the implementation address
-        _factory = _deployOApp(
-            type(PoolPartyFactory).creationCode,
-            abi.encode(
-                _endpoint,
-                deployer,
-                _implementation,
-                _tokenImplementation
-            )
-        );
-    }
-
-    function _deployOApp(
-        bytes memory _oappBytecode,
-        bytes memory _constructorArgs
-    ) internal returns (address addr) {
-        bytes memory bytecode = bytes.concat(
-            abi.encodePacked(_oappBytecode),
-            _constructorArgs
-        );
-        assembly {
-            addr := create(0, add(bytecode, 0x20), mload(bytecode))
-            if iszero(extcodesize(addr)) {
-                revert(0, 0)
-            }
-        }
+        // Deploy the factory with the implementation addresses
+        _factory = address(new PoolPartyFactory(
+            _implementation,
+            _tokenImplementation
+        ));
     }
 }
