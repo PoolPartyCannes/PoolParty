@@ -47,7 +47,7 @@ To securily, transparently and verifiably store the custom company solidity logi
 
 ## Next steps
 
-- We want to bring this tool primarly in the hands of hackathons in order for hackers to be able get a picture of the credibility of a company and wether or not they are likely to pay the bounties to the winning hackers.
+- From the reactions we've gotten when talking to people here about the project we think it is clear to say that this is a product that is actually usefull. We would really like to be able to at least bring it to a minimum production state after the hackathon with a bit of support, so that we can give this to the world.
 
 ## Links
 
