@@ -1,80 +1,60 @@
-# 🏗 Scaffold-ETH 2
+<h1 align="center">
+🏊🏊‍♀️🏊‍♂️ Pool Party ️🏊🏊‍♀️🏊‍♂️
+</h1>
 
 <h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
+  <a href="https://sloths-warsaw.vercel.app/">Website</a> |
+  <a href="https://devfolio.co/projects/sloth-shaming-bea7">Devfolio</a>
+  <p align="center">
+    <img src="./assets/walrus.png" alt="Logo" width="300" height="auto">
+  </p>
 </h4>
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+🦭 As crypto matures, more and more companies with already existing tokens and holders will merge, both as companies, and probably as tokens too. While it is better for rebranding, this is usually a very capital inefficient process where old liquidity gets stuck and companies will just have to add aditionall liquidity into a new pool. Pool Party is a platform that allows companies to create a deposit phase, and then have the old liquidity bootstrap the new company and ecosystem, while users will get their verifiable fair share of the pie. 🍰
 
-⚙️ Built using NextJS, RainbowKit, Foundry, Wagmi, Viem, and Typescript.
+- ⛓️ **Cross Chain**: Thanks to LayerZero we can support multiple different evms, and the new token created will be a OFT token, meaning it will be crosschain out of the box.
+- 💎 **Shine bright like a Diamond**: Companies won't want to deploy a plain ERC20 token. Therefore, we allow companies to sideload their custom functions in the contract with the help of ERC2535 Diamond proxies
+- 💰 **Dynamic Amounts of Tokens**: No matter how many tokens you're merging, we got you.
+- 👕 **TEEs**: All computations are safe and verifiable, thanks to Oasis ROFL. 
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+![Landing page](assets/ui.png)
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
-
-## Requirements
-
-Before you begin, you need to install the following tools:
-
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
-
-## Quickstart
-
-To get started with Scaffold-ETH 2, follow the steps below:
-
-1. Install dependencies if it was skipped in CLI:
-
-```
-cd my-dapp-example
-yarn install
-```
-
-2. Run a local network in the first terminal:
-
-```
-yarn chain
-```
-
-This command starts a local Ethereum network using Foundry. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/foundry/foundry.toml`.
-
-3. On a second terminal, deploy the test contract:
-
-```
-yarn deploy
-```
-
-This command deploys a test smart contract to the local network. The contract is located in `packages/foundry/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/foundry/script` to deploy the contract to the network. You can also customize the deploy script.
-
-4. On a third terminal, start your NextJS app:
-
-```
-yarn start
-```
-
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
-
-Run smart contract test with `yarn foundry:test`
-
-- Edit your smart contracts in `packages/foundry/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/foundry/script`
+## Party Finality Date 
 
 
-## Documentation
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+If you find a sloth, there is the possibility to post a roast for this slow payee on x dot com the everything app in a single click
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+## Diagrams
+### Full flow, from company party creation to token deployment
+![Create Nft](assets/diagram.png)
 
-## Contributing to Scaffold-ETH 2
+## Bounties 😎
 
-We welcome contributions to Scaffold-ETH 2!
+### Request Network - Best app that creates requests
+We created a reputation system for to create, query and update reputation for Request Network.
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+### BuidlGuidl - Best Scaffold-ETH2 Submission
+We initialized the project using Scaffold-ETH 2 with the [SE2 Request Network extension](https://github.com/arjanjohan/scaffold-request-extension). 
+
+### Worldcoin - Best Use of World ID 
+We use Worldcoin World ID for preventing sybil and spam attacks, to ensure a more fair and robust reputation system.
+
+## Next steps
+
+- We want to bring this tool primarly in the hands of hackathons in order for hackers to be able get a picture of the credibility of a company and wether or not they are likely to pay the bounties to the winning hackers.
+
+## Links
+
+- [Devfolio](https://devfolio.co/projects/sloth-shaming-bea7)
+- [Vercel](https://sloths-warsaw.vercel.app/)
+- [Github](https://github.com/PoolPartyCannes/PoolParty)
+
+### Deployments
+- [Deployment Celo](https://explorer.celo.org/alfajores/address/0x81afFbf9392a1402B44B8b6C45C89F602657b3eF)
+- [Deployment Sei](https://seitrace.com/address/0xF519289Ed67326514c6Eb47851f9e605DC8ad640?chain=pacific-1)
+
+## Team
+
+- [Mikael](https://x.com/poisonedfunctor)
+- [0xjsi.eth](https://x.com/0xjsieth)

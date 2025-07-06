@@ -72,24 +72,24 @@ contract PoolPartyFactory is IOAppComposer, OApp, DiamondParty {
 
         // Initialize array with proper size for all tokens
         address[] memory tokenArr = new address[](_acceptedTokens.length);
-        for (uint256 i = 0; i < _acceptedTokens.length;) {
+        for (uint256 i = 0; i < _acceptedTokens.length; ) {
             tokenArr[i] = _acceptedTokens[i].dynamicAddress;
             unchecked {
                 i++;
             }
         }
 
-        for (uint256 i = 0; i < _acceptedTokens.length;) {
+        for (uint256 i = 0; i < _acceptedTokens.length; ) {
             if (uint256(_acceptedTokens[i].chainId) == block.chainid) {
                 _instances = new address[](1);
                 _instances[0] = _deployPartyProxy(tokenArr, _identifier);
             } else {
                 // // This needs to be fixed
                 // _lzSend(
-                    // _acceptedTokens[i].chainId,
-                    // abi.encode(tokenArr, _identifier, _tokenInfo),
-                    // msg.sender,
-                    // msg.sender
+                // _acceptedTokens[i].chainId,
+                // abi.encode(tokenArr, _identifier, _tokenInfo),
+                // msg.sender,
+                // msg.sender
                 // );
             }
             unchecked {
@@ -184,16 +184,16 @@ contract PoolPartyFactory is IOAppComposer, OApp, DiamondParty {
         // if (msg.sender != endpoint) revert PPErrors.NOT_LAYER_ZERO_ENDPOINT();
         // if (_oApp != address(this)) revert PPErrors.NOT_OAPP();
         // (address[] memory acceptedTokens, string memory identifier, PPDataTypes.TokenInfo memory tokenInfo) = abi.decode(
-            // OFTComposeMsgCodec.composeMsg(_message),
-            // (address[], string, PPDataTypes.TokenInfo)
+        // OFTComposeMsgCodec.composeMsg(_message),
+        // (address[], string, PPDataTypes.TokenInfo)
         // );
         // if (acceptedTokens.length == 0)
-            // revert PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN();
+        // revert PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN();
         // if (tokenInfo.decimals == 0 || tokenInfo.totalSupply == 0) {
-            // revert PPErrors.TOKEN_INFO_NOT_SET();
+        // revert PPErrors.TOKEN_INFO_NOT_SET();
         // } else {
-            // infoOfParty[identifier] = tokenInfo;
-            // _deployPartyProxy(acceptedTokens, identifier);
+        // infoOfParty[identifier] = tokenInfo;
+        // _deployPartyProxy(acceptedTokens, identifier);
         // }
     }
 
@@ -205,20 +205,19 @@ contract PoolPartyFactory is IOAppComposer, OApp, DiamondParty {
         bytes calldata /*_extraData*/
     ) internal override {
         // if (_message.isComposed()) {
-            // // @dev Proprietary composeMsg format for the OFT.
-            // bytes memory composeMsg = OFTComposeMsgCodec.encode(
-                // _origin.nonce,
-                // _origin.srcEid,
-                // amountReceivedLD,
-                // _message.composeMsg()
-            // );
-
-            // // @dev Stores the lzCompose payload that will be executed in a separate tx.
-            // // Standardizes functionality for executing arbitrary contract invocation on some non-evm chains.
-            // // @dev The off-chain executor will listen and process the msg based on the src-chain-callers compose options passed.
-            // // @dev The index is used when a OApp needs to compose multiple msgs on lzReceive.
-            // // For default OFT implementation there is only 1 compose msg per lzReceive, thus its always 0.
-            // endpoint.sendCompose(toAddress, _guid, 0 /* the index of the composed message*/, composeMsg);
+        // // @dev Proprietary composeMsg format for the OFT.
+        // bytes memory composeMsg = OFTComposeMsgCodec.encode(
+        // _origin.nonce,
+        // _origin.srcEid,
+        // amountReceivedLD,
+        // _message.composeMsg()
+        // );
+        // // @dev Stores the lzCompose payload that will be executed in a separate tx.
+        // // Standardizes functionality for executing arbitrary contract invocation on some non-evm chains.
+        // // @dev The off-chain executor will listen and process the msg based on the src-chain-callers compose options passed.
+        // // @dev The index is used when a OApp needs to compose multiple msgs on lzReceive.
+        // // For default OFT implementation there is only 1 compose msg per lzReceive, thus its always 0.
+        // endpoint.sendCompose(toAddress, _guid, 0 /* the index of the composed message*/, composeMsg);
         // }
     }
 
