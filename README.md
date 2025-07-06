@@ -36,14 +36,14 @@ If the user was a holder of more than one token thats being merged, then it woul
 
 ## Bounties 😎
 
-### LayerZero - Best Omnichain DeFi Primitive
+### ⛓️‍💥 LayerZero - Best Omnichain DeFi Primitive
 We created this protocol to be cross chain, and support multiple different chains. It is fully powered as an OApp, making use of LayerZero's compose feature.
 
-### Oasis Protocol - Build on Oasis Stack
+### 🌴 Oasis Protocol - Build on Oasis Stack
 For all the protocol signing, as well as orchestrating the retrieval of solidity data from Walrus to create a diamond cut facet, we're making use of the Oasis ROFL TEE as an API endpoint.
 
-### Walrus - Best app using Walrus for storage  
-We use Worldcoin World ID for preventing sybil and spam attacks, to ensure a more fair and robust reputation system.
+### 🦭 Walrus - Best app using Walrus for storage  
+To securily, transparently and verifiably store the custom company solidity logic that they will cut into their diamond facet, we have this stored, read and fetched from Walrus
 
 ## Next steps
 
