@@ -19,23 +19,30 @@
 
 ![Landing page](assets/ui.png)
 
-## Party Finality Date 
+## Party Finality Date 📆 
 
 When the party's finality date is reached, all tokens will get sold. After that we will use a formula to decide how much each person is getting. All tokens are sold for eth, either in one clip, or TWAP:ed during a certain duration chosen by the company upon party creation. First, all ETH is grouped together onto the factory contract of the chain where the token will get deposited. In each party contract, the amount of tokens deposited, and the total eth derived from each side.
 
+🤓 Let's get nerdy! The formula we will use for this is:
+```
+total_eth_chain_x * (user_deposit_chain_x / total_deposit_chain_x)
+```
+
+If the user was a holder of more than one token thats being merged, then it would be this formula for each token the user deposited.
+
 ## Diagrams
 ### Full flow, from company party creation to token deployment
-![Create Nft](assets/diagram.png)
+![Full flow](assets/diagram.png)
 
 ## Bounties 😎
 
-### Request Network - Best app that creates requests
-We created a reputation system for to create, query and update reputation for Request Network.
+### LayerZero - Best Omnichain DeFi Primitive
+We created this protocol to be cross chain, and support multiple different chains. It is fully powered as an OApp, making use of LayerZero's compose feature.
 
-### BuidlGuidl - Best Scaffold-ETH2 Submission
-We initialized the project using Scaffold-ETH 2 with the [SE2 Request Network extension](https://github.com/arjanjohan/scaffold-request-extension). 
+### Oasis Protocol - Build on Oasis Stack
+For all the protocol signing, as well as orchestrating the retrieval of solidity data from Walrus to create a diamond cut facet, we're making use of the Oasis ROFL TEE as an API endpoint.
 
-### Worldcoin - Best Use of World ID 
+### Walrus - Best app using Walrus for storage  
 We use Worldcoin World ID for preventing sybil and spam attacks, to ensure a more fair and robust reputation system.
 
 ## Next steps
