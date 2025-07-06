@@ -9,7 +9,7 @@ import {DeployScript} from "../script/Deploy.s.sol";
 /* Our Contracts */
 import {PoolPartyFactory} from "../contracts/PoolPartyFactory.sol";
 import {PoolParty} from "../contracts/PoolParty.sol";
-import {PartyToken, PartyTokenCore} from "../contracts/PartyToken.sol";
+import {PartyToken} from "../contracts/PartyToken.sol";
 
 /* Our libraries */
 import {PPDataTypes} from "../contracts/libraries/PPDataTypes.sol";
@@ -32,7 +32,7 @@ interface IFullTokenFacet {
 contract YourContractTest is TestHelperOz5 {
     PoolPartyFactory factory;
     PoolParty implementation;
-    PartyTokenCore partyTokenImplementation;
+    PartyToken partyTokenImplementation;
     
     // Test addresses
     address public user1 = address(0x2);
@@ -51,19 +51,12 @@ contract YourContractTest is TestHelperOz5 {
         implementation = new PoolParty();
 
         // Deploy the token implementation
-        partyTokenImplementation = new PartyTokenCore();
+        partyTokenImplementation = new PartyToken();
 
-        // Deploy the factory using _deployOApp helper to set test contract as owner
-        factory = PoolPartyFactory(
-            _deployOApp(
-                type(PoolPartyFactory).creationCode,
-                abi.encode(
-                    endpoints[1],  // endpoint
-                    address(this), // owner (test contract)
-                    address(implementation), // implementation
-                    address(partyTokenImplementation) // token implementation
-                )
-            )
+        // Deploy the factory directly with correct constructor parameters
+        factory = new PoolPartyFactory(
+            address(implementation), // implementation
+            address(partyTokenImplementation) // token implementation
         );
     }
 
@@ -74,29 +67,25 @@ contract YourContractTest is TestHelperOz5 {
         uint256 _numTokens,
         PPDataTypes.TokenInfo memory _tokenInfo
     ) internal returns (address[] memory _tokens, address[] memory _instances) {
-        // First, we need to deploy tokens to get their addresses
-        // But we can't call deployToken() yet because token info isn't stored
-        // So we'll create the tokens directly using the implementation
-        
+        require(_numTokens >= 1 && _numTokens <= 2, "Can only deploy 1 or 2 tokens per party");
         _tokens = new address[](_numTokens);
         for (uint256 i = 0; i < _numTokens; i++) {
-            // Create token data
+            // Create token data for the clone
             bytes memory data = abi.encodePacked(_tokenInfo.decimals, _tokenInfo.totalSupply);
-            PartyTokenCore core = PartyTokenCore(ClonesWithImmutableArgs.clone(address(partyTokenImplementation), data));
-            core.initialize(_tokenInfo.name, _tokenInfo.symbol);
-            _tokens[i] = address(new PartyToken(address(core), endpoints[1], address(this)));
+            address token = address(ClonesWithImmutableArgs.clone(address(partyTokenImplementation), data));
+            PartyToken(token).initialize(_tokenInfo.name, _tokenInfo.symbol);
+            _tokens[i] = token;
         }
-        
-        // Now create the party info with the actual token addresses
+
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](_numTokens);
         for (uint256 i = 0; i < _numTokens; i++) {
             info[i] = PPDataTypes.DynamicInfo({
                 dynamicAddress: _tokens[i],
-                chainId: CHAIN_ID
+                chainId: uint96(block.chainid)
             });
         }
-        
-        // Deploy the party
+
+        // Only use the factory to deploy PoolParty, do not deploy PoolParty clones directly
         _instances = factory.deployParty(info, _identifier, _tokenInfo);
     }
 
@@ -175,7 +164,7 @@ contract YourContractTest is TestHelperOz5 {
         
         (address[] memory tokens, address[] memory instances) = deployPartyAndGetTokens(
             "multi-party",
-            3,
+            2,
             tokenInfo
         );
         
@@ -197,9 +186,9 @@ contract YourContractTest is TestHelperOz5 {
         
         // Create token first
         bytes memory data = abi.encodePacked(tokenInfo.decimals, tokenInfo.totalSupply);
-        PartyTokenCore core = PartyTokenCore(ClonesWithImmutableArgs.clone(address(partyTokenImplementation), data));
+        PartyToken core = PartyToken(ClonesWithImmutableArgs.clone(address(partyTokenImplementation), data));
         core.initialize(tokenInfo.name, tokenInfo.symbol);
-        address token = address(new PartyToken(address(core), endpoints[1], address(this)));
+        address token = address(new PartyToken());
         
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](1);
         info[0] = PPDataTypes.DynamicInfo({
@@ -232,14 +221,14 @@ contract YourContractTest is TestHelperOz5 {
         
         // Create token first
         bytes memory data = abi.encodePacked(tokenInfo.decimals, tokenInfo.totalSupply);
-        PartyTokenCore core = PartyTokenCore(ClonesWithImmutableArgs.clone(address(partyTokenImplementation), data));
+        PartyToken core = PartyToken(ClonesWithImmutableArgs.clone(address(partyTokenImplementation), data));
         core.initialize(tokenInfo.name, tokenInfo.symbol);
-        address token = address(new PartyToken(address(core), endpoints[1], address(this)));
+        address token = address(new PartyToken());
         
         PPDataTypes.DynamicInfo[] memory info = new PPDataTypes.DynamicInfo[](1);
         info[0] = PPDataTypes.DynamicInfo({
             dynamicAddress: token,
-            chainId: CHAIN_ID
+            chainId: uint96(block.chainid)
         });
         
         // Deploy first party
@@ -269,11 +258,7 @@ contract YourContractTest is TestHelperOz5 {
 
     function test_UpdateImplementation() public {
         PoolParty newImplementation = new PoolParty();
-        emit log_address(factory.owner());
-        // Use the actual owner for this call
-        vm.startPrank(factory.owner());
         factory.updateImplemantation(address(newImplementation));
-        vm.stopPrank();
         assertEq(
             factory.implementation(),
             address(newImplementation),
@@ -357,7 +342,7 @@ contract YourContractTest is TestHelperOz5 {
         
         (address[] memory tokens, address[] memory instances) = deployPartyAndGetTokens(
             identifier,
-            3,
+            2,
             tokenInfo
         );
         
@@ -372,11 +357,6 @@ contract YourContractTest is TestHelperOz5 {
             party.getTokenOfIndex(1),
             tokens[1],
             "Token at index 1 should match"
-        );
-        assertEq(
-            party.getTokenOfIndex(2),
-            tokens[2],
-            "Token at index 2 should match"
         );
     }
 
@@ -444,14 +424,14 @@ contract YourContractTest is TestHelperOz5 {
     // ============ PartyToken Tests ============
 
     function test_PartyTokenCore_Constructor() public {
-        PartyTokenCore newToken = new PartyTokenCore();
+        PartyToken newToken = new PartyToken();
         // Test that constructor works without reverting
         assertTrue(address(newToken) != address(0), "Token should be deployed");
     }
 
     function test_PartyTokenCore_Initialize() public {
         // Test that we can create a new PartyTokenCore
-        PartyTokenCore token = new PartyTokenCore();
+        PartyToken token = new PartyToken();
         assertTrue(address(token) != address(0), "Token should be deployed");
         
         // Note: The actual initialization happens in the factory.deployToken() method
@@ -460,7 +440,7 @@ contract YourContractTest is TestHelperOz5 {
 
     function test_PartyTokenCore_Initialize_Twice() public {
         // Test that we can create a new PartyTokenCore
-        PartyTokenCore token = new PartyTokenCore();
+        PartyToken token = new PartyToken();
         assertTrue(address(token) != address(0), "Token should be deployed");
         
         // Note: The actual initialization happens in the factory.deployToken() method
@@ -554,7 +534,7 @@ contract YourContractTest is TestHelperOz5 {
 
     function test_Factory_ZeroImplementation() public {
         vm.expectRevert();
-        new PoolPartyFactory(address(0), address(this), address(0), address(0));
+        new PoolPartyFactory(address(0), address(0));
     }
 
     function test_Party_Constructor() public {

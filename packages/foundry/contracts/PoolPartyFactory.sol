@@ -11,15 +11,8 @@ import {PPEvents} from "./libraries/PPEvents.sol";
 
 /* PoolParty contracts */
 import {PoolParty} from "../contracts/PoolParty.sol";
-import {PartyTokenCore, PartyToken} from "../contracts/PartyToken.sol";
+import {PartyToken} from "../contracts/PartyToken.sol";
 import {DiamondParty} from "../contracts/DiamondParty.sol";
-
-/* LayerZero Interfaces */
-import {IOAppComposer} from "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/IOAppComposer.sol";
-import {Origin, OApp} from "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
-
-/* OpenZeppelin libraries */
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title PoolPartyFactory
@@ -30,30 +23,23 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  *   while you delegatecall!
  *
  */
-contract PoolPartyFactory is IOAppComposer, OApp, DiamondParty {
+contract PoolPartyFactory is DiamondParty {
     using ClonesWithImmutableArgs for address;
-    //using MsgCodec for bytes;
-    //using OptionsBuilder for bytes;
 
     address public implementation;
     address public tokenImplementation;
-    address private pEndpoint;
-    mapping(uint96 chainId => address partyAddress) public sidePartyAt;
     mapping(string identifier => PPDataTypes.TokenInfo tokenInfo)
         public infoOfParty;
 
-    /// @notice Initialize with Endpoint V2 and owner address
-    /// @param _endpoint The local chain's LayerZero Endpoint V2 address
-    /// @param _owner    The address permitted to configure this OApp
+    /// @notice Initialize with implementation and token implementation
+    /// @param _implementation The implementation address
+    /// @param _tokenImplementation The token implementation address
     constructor(
-        address _endpoint,
-        address _owner,
         address _implementation,
         address _tokenImplementation
-    ) OApp(_endpoint, _owner) Ownable(_owner) {
+    ) {
         implementation = _implementation;
         tokenImplementation = _tokenImplementation;
-        pEndpoint = _endpoint;
     }
 
     function deployParty(
@@ -83,14 +69,6 @@ contract PoolPartyFactory is IOAppComposer, OApp, DiamondParty {
             if (uint256(_acceptedTokens[i].chainId) == block.chainid) {
                 _instances = new address[](1);
                 _instances[0] = _deployPartyProxy(tokenArr, _identifier);
-            } else {
-                // // This needs to be fixed
-                // _lzSend(
-                // _acceptedTokens[i].chainId,
-                // abi.encode(tokenArr, _identifier, _tokenInfo),
-                // msg.sender,
-                // msg.sender
-                // );
             }
             unchecked {
                 i++;
@@ -134,14 +112,9 @@ contract PoolPartyFactory is IOAppComposer, OApp, DiamondParty {
             tokenInfo.decimals,
             tokenInfo.totalSupply
         );
-        PartyTokenCore core = PartyTokenCore(tokenImplementation.clone(data));
-        // Don't initialize the clone directly - we'll initialize the diamond instead
-        address partyTokenAdapter = address(
-            new PartyToken(address(core), pEndpoint, msg.sender)
-        );
+        PartyToken core = PartyToken(tokenImplementation.clone(data));
         // Use the core token address for the facet, not the adapter
-        address fullToken = address(core);
-        _instance = _diamondsOnMyBankAccount(fullToken, tokenInfo);
+        _instance = _diamondsOnMyBankAccount(address(core), tokenInfo);
     }
 
     function version() external pure returns (uint8 _version) {
@@ -150,75 +123,14 @@ contract PoolPartyFactory is IOAppComposer, OApp, DiamondParty {
 
     function updateImplemantation(
         address _newImplementation
-    ) external onlyOwner {
+    ) external {
         implementation = _newImplementation;
     }
 
     function updateTokenImplemantation(
         address _newTokenImplementation
-    ) external onlyOwner {
+    ) external {
         tokenImplementation = _newTokenImplementation;
-    }
-
-    function addSideParty(
-        uint96 _chainId,
-        address _partyAddress
-    ) external onlyOwner {
-        sidePartyAt[_chainId] = _partyAddress;
-    }
-
-    /**
-     * @notice Handles incoming composed messages from LayerZero.
-     * @dev Ensures the message comes from the correct OApp and is sent through the authorized endpoint.
-     *
-     * @param _oApp The address of the OApp that is sending the composed message.
-     *
-     */
-    function lzCompose(
-        address _oApp,
-        bytes32 /* _guid */,
-        bytes calldata _message,
-        address /* _executor */,
-        bytes calldata /* _extraData */
-    ) external payable override {
-        // if (msg.sender != endpoint) revert PPErrors.NOT_LAYER_ZERO_ENDPOINT();
-        // if (_oApp != address(this)) revert PPErrors.NOT_OAPP();
-        // (address[] memory acceptedTokens, string memory identifier, PPDataTypes.TokenInfo memory tokenInfo) = abi.decode(
-        // OFTComposeMsgCodec.composeMsg(_message),
-        // (address[], string, PPDataTypes.TokenInfo)
-        // );
-        // if (acceptedTokens.length == 0)
-        // revert PPErrors.MUST_BE_AT_LEAST_ONE_TOKEN();
-        // if (tokenInfo.decimals == 0 || tokenInfo.totalSupply == 0) {
-        // revert PPErrors.TOKEN_INFO_NOT_SET();
-        // } else {
-        // infoOfParty[identifier] = tokenInfo;
-        // _deployPartyProxy(acceptedTokens, identifier);
-        // }
-    }
-
-    function _lzReceive(
-        Origin calldata _origin,
-        bytes32 _guid,
-        bytes calldata _message,
-        address /*_executor*/,
-        bytes calldata /*_extraData*/
-    ) internal override {
-        // if (_message.isComposed()) {
-        // // @dev Proprietary composeMsg format for the OFT.
-        // bytes memory composeMsg = OFTComposeMsgCodec.encode(
-        // _origin.nonce,
-        // _origin.srcEid,
-        // amountReceivedLD,
-        // _message.composeMsg()
-        // );
-        // // @dev Stores the lzCompose payload that will be executed in a separate tx.
-        // // Standardizes functionality for executing arbitrary contract invocation on some non-evm chains.
-        // // @dev The off-chain executor will listen and process the msg based on the src-chain-callers compose options passed.
-        // // @dev The index is used when a OApp needs to compose multiple msgs on lzReceive.
-        // // For default OFT implementation there is only 1 compose msg per lzReceive, thus its always 0.
-        // endpoint.sendCompose(toAddress, _guid, 0 /* the index of the composed message*/, composeMsg);
-        // }
     }
 
     function _deployPartyProxy(
