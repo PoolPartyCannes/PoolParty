@@ -3,7 +3,7 @@
 </h1>
 
 <h4 align="center">
-  <a href="https://poolparty-53ma9ewcr-zenis-projects.vercel.app/">Website</a>
+  <a href="https://poolparty-jj86399be-zenis-projects.vercel.app/">Website</a>
   <p align="center">
     <img src="./assets/walrus.png" alt="Logo" width="300" height="auto">
   </p>
@@ -50,7 +50,7 @@ To securily, transparently and verifiably store the custom company solidity logi
 
 ## Links
 
-- [Vercel](https://poolparty-53ma9ewcr-zenis-projects.vercel.app/)
+- [Vercel](https://poolparty-jj86399be-zenis-projects.vercel.app/)
 - [Github](https://github.com/PoolPartyCannes/PoolParty)
 
 ### Deployments
