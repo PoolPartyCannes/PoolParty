@@ -5,7 +5,7 @@ import "./DeployHelpers.s.sol";
 
 import {PoolPartyFactory} from "../contracts/PoolPartyFactory.sol";
 import {PoolParty} from "../contracts/PoolParty.sol";
-import {PartyTokenCore} from "../contracts/PartyToken.sol";
+import {PartyToken} from "../contracts/PartyToken.sol";
 import {TestHelperOz5} from "@layerzerolabs/test-devtools-evm-foundry/contracts/TestHelperOz5.sol";
 
 /**
@@ -43,7 +43,7 @@ contract DeployParty is ScaffoldETHDeploy {
         _implementation = address(new PoolParty());
 
         // Deploy the token implementation
-        _tokenImplementation = address(new PartyTokenCore());
+        _tokenImplementation = address(new PartyToken());
 
         // Token deployed
         // _tokenImplementation is already set above

@@ -14,7 +14,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 /* sw0nt contracts */
 import {Clone} from "@sw0nt/contracts/Clone.sol";
 
-contract PartyTokenCore is ERC20, Initializable, Clone {
+contract PartyToken is ERC20, Initializable, Clone {
     string internal pName;
     string internal pSymbol;
 
@@ -50,24 +50,5 @@ contract PartyTokenCore is ERC20, Initializable, Clone {
 
     function totalSupply() public view override returns (uint256 _totalSupply) {
         _totalSupply = _getArgUint256(1);
-    }
-}
-
-/// @notice OFTAdapter uses a deployed ERC-20 token and SafeERC20 to interact with the OFTCore contract.
-contract PartyToken is OFTAdapter, Initializable {
-    constructor(
-        address _token,
-        address _lzEndpoint,
-        address _owner
-    ) OFTAdapter(_token, _lzEndpoint, _owner) Ownable(_owner) {
-        _disableInitializers();
-    }
-
-    /**
-     * @dev Override sharedDecimals to return 6 instead of the default.
-     * This ensures compatibility with tokens that have 18 decimals.
-     */
-    function sharedDecimals() public view virtual override returns (uint8) {
-        return 6;
     }
 }
