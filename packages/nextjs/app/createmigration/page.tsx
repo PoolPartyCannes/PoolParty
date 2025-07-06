@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { hardhat } from "viem/chains";
 import { AddressInput, InputBase, IntegerInput } from "~~/components/scaffold-eth";
-import { useFetchBlocks } from "~~/hooks/scaffold-eth";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { notification } from "~~/utils/scaffold-eth";
@@ -23,11 +22,9 @@ type DynamicInfo = {
 };
 
 const CreateMigraiton: NextPage = () => {
-  const { error } = useFetchBlocks();
   const { targetNetwork } = useTargetNetwork();
   const [isLocalNetwork, setIsLocalNetwork] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const { writeContractAsync } = useScaffoldWriteContract({ contractName: "PoolPartyFactory", chainId: 31337 });
+  const { writeContractAsync: writeYourContractAsync } = useScaffoldWriteContract({ contractName: "PoolPartyFactory" });
   const [contractAddressInputs, setContractAddressInputs] = useState<ContractAddressInput[]>([
     { address: "", chainId: null, chainIdInput: "", chainIdError: null },
   ]);
@@ -47,12 +44,6 @@ const CreateMigraiton: NextPage = () => {
       setIsLocalNetwork(false);
     }
   }, [targetNetwork.id]);
-
-  useEffect(() => {
-    if (targetNetwork.id === hardhat.id && error) {
-      setHasError(true);
-    }
-  }, [targetNetwork.id, error]);
 
   useEffect(() => {
     if (!isLocalNetwork) {
@@ -81,23 +72,6 @@ const CreateMigraiton: NextPage = () => {
     targetNetwork.blockExplorers?.default.url,
     targetNetwork.name,
   ]);
-
-  useEffect(() => {
-    if (hasError) {
-      notification.error(
-        <>
-          <p className="font-bold mt-0 mb-1">Cannot connect to local provider</p>
-          <p className="m-0">
-            - Did you forget to run <code className="italic bg-base-300 text-base font-bold">yarn chain</code> ?
-          </p>
-          <p className="mt-1 break-normal">
-            - Or you can change <code className="italic bg-base-300 text-base font-bold">targetNetwork</code> in{" "}
-            <code className="italic bg-base-300 text-base font-bold">scaffold.config.ts</code>
-          </p>
-        </>,
-      );
-    }
-  }, [hasError]);
 
   const handleContractAddressChange = (index: number, value: string) => {
     const newInputs = [...contractAddressInputs];
@@ -147,7 +121,8 @@ const CreateMigraiton: NextPage = () => {
     setContractAddressInputs(newInputs);
   };
 
-  const handleCreateMigration = async () => {
+  const handleCreateMigration = async (e: React.FormEvent) => {
+    e.preventDefault();
     const identifier = "iddy";
     const validContractInputs = contractAddressInputs.filter(
       input => input.address.trim() !== "" && input.chainId !== null,
@@ -177,17 +152,9 @@ const CreateMigraiton: NextPage = () => {
     console.log("Deploying party: ", dynamicInfo, identifier, tokenInfo);
 
     try {
-      await writeContractAsync({
-        functionName: "deployParty",
-        args: [
-          dynamicInfo,
-          identifier,
-          tokenInfo,
-          // migrationConfig,           // struct parameter
-          // "0x742d35Cc6634C0532925a3b8D63C4CE4fF5e7a4c", // address parameter
-          // BigInt("1000000000000000000"), // uint256 parameter (1 ETH)
-        ],
-        // value: BigInt("100000000000000000"), // 0.1 ETH if function is payable
+      await writeYourContractAsync({
+        functionName: "testy",
+        args: ["f8w9fwj3fosfjslfjsod8fus0d8fus083fjs3f"],
       });
     } catch (error) {
       console.error("Transaction failed:", error);
@@ -197,7 +164,6 @@ const CreateMigraiton: NextPage = () => {
   const handleDecimalsChange = (e: string) => {
     const value = e;
     setDecimalsInput(value);
-    // Only validate if user has typed something
     if (value.trim() === "") {
       setDecimalsError(null);
       setNewTokenDecimals(null);
@@ -216,7 +182,7 @@ const CreateMigraiton: NextPage = () => {
       setDecimalsError("Cannot be negative.");
       setNewTokenDecimals(null);
     } else {
-      setDecimalsError(null); // ✅ valid
+      setDecimalsError(null);
       setNewTokenDecimals(parsed);
     }
   };
@@ -224,7 +190,6 @@ const CreateMigraiton: NextPage = () => {
   const handleSupplyChange = (e: string) => {
     const value = e;
     setSupplyInput(value);
-    // Only validate if user has typed something
     if (value.trim() === "") {
       setSupplyError(null);
       setNewTokenSupply(null);
@@ -243,50 +208,20 @@ const CreateMigraiton: NextPage = () => {
       setSupplyError("Cannot be negative.");
       setNewTokenSupply(null);
     } else {
-      setSupplyError(null); // ✅ valid
+      setSupplyError(null);
       setNewTokenSupply(parsed);
     }
   };
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   // Filter out empty contract addresses and prepare data for submission
-  //   const validContractInputs = contractAddressInputs.filter(
-  //     input => input.address.trim() !== "" && input.chainId !== null,
-  //   );
-
-  //   const dynamicInfoList: DynamicInfo[] = [];
-
-  //   validContractInputs.forEach(function(value){
-  //     const newDynamicInfo: DynamicInfo = {
-  //       dynamicAddress: value.address,
-  //       chainId: BigInt(value.chainId ?? 0),
-  //     };
-  //     dynamicInfoList.push(newDynamicInfo);
-  //   })
-
-  //   console.log(dynamicInfoList);
-
-  //   console.log(
-  //     "Submitted values:",
-  //     validContractInputs,
-  //     newTokenName,
-  //     newTokenTicker,
-  //     newTokenDecimals,
-  //     newTokenSupply,
-  //     newContractCodeInput,
-  //     newOwnable,
-  //   );
-  // };
-
   return (
-    <div className="container mx-auto my-10 flex justify-center">
+    <div className="container mx-auto my-10 flex flex-col items-center justify-center">
+      <div>
+        <span className="block text-5xl font-bold mb-30 text-white">Create a new Token Migration</span>
+      </div>
       <form
         onSubmit={handleCreateMigration}
-        className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-white dark:bg-base-100 text-base-content p-8 rounded-xl shadow-lg space-y-6"
+        className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-white bg-base-100 text-base-content p-8 rounded-xl shadow-lg space-y-6"
       >
-        {/* Contract Address Inputs */}
         {contractAddressInputs.map((contractInput, index) => (
           <div key={index} className="border rounded-lg p-4 space-y-4">
             <div className="flex items-center gap-4">
@@ -325,28 +260,26 @@ const CreateMigraiton: NextPage = () => {
             + Add another token to migrate
           </button>
         </div>
-
-        {/* New Token Info Inputs */}
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             <label className="w-40 text-right whitespace-nowrap">New Token Name</label>
-            <InputBase value={newTokenName} onChange={e => setNewTokenName(e)} />
+            <InputBase value={newTokenName} onChange={e => setNewTokenName(e)} placeholder="Pool Party Coin" />
           </div>
 
           <div className="flex items-center gap-4">
             <label className="w-40 text-right whitespace-nowrap">New Token Ticker</label>
-            <InputBase value={newTokenTicker} onChange={e => setNewTokenTicker(e)} />
+            <InputBase value={newTokenTicker} onChange={e => setNewTokenTicker(e)} placeholder="PP" />
           </div>
 
           <div className="flex items-center gap-4">
             <label className="w-40 text-right whitespace-nowrap">New Token Decimals</label>
-            <IntegerInput value={decimalsInput} onChange={handleDecimalsChange} />
+            <IntegerInput value={decimalsInput} onChange={handleDecimalsChange} placeholder="18" />
             {decimalsError && <p className="text-sm text-red-600">{decimalsError}</p>}
           </div>
 
           <div className="flex items-center gap-4">
             <label className="w-40 text-right whitespace-nowrap">New Token Supply</label>
-            <IntegerInput value={supplyInput} onChange={handleSupplyChange} />
+            <IntegerInput value={supplyInput} onChange={handleSupplyChange} placeholder="10000000" />
             {supplyError && <p className="text-sm text-red-600">{supplyError}</p>}
           </div>
 
@@ -366,10 +299,9 @@ const CreateMigraiton: NextPage = () => {
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end">
           <button type="submit" className="btn btn-primary">
-            Submit
+            Create Migration
           </button>
         </div>
       </form>
